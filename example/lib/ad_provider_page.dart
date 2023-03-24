@@ -23,7 +23,8 @@ class AdProviderPage extends StatefulWidget {
   State<AdProviderPage> createState() => _AdmobPageState();
 }
 
-class _AdmobPageState extends State<AdProviderPage> {
+class _AdmobPageState extends State<AdProviderPage>
+    with AutomaticKeepAliveClientMixin {
   Object? _rewardedAd;
   Object? _interstitialAd;
   bool _rewardedAdLoading = false;
@@ -63,12 +64,13 @@ class _AdmobPageState extends State<AdProviderPage> {
     final rewarded = await widget.interstitial.showFullscreenAd();
     if (!rewarded) return;
     setState(() {
-      _rewardedAd = null;
+      _interstitialAd = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ListView(
       children: [
         AutoLoadingAdContainer(
@@ -106,13 +108,24 @@ class _AdmobPageState extends State<AdProviderPage> {
         ),
         ListTile(
           title: const Text("Start mediation test"),
+          subtitle: widget.startMediationTest == null
+              ? const Text("Not implemented")
+              : null,
           onTap: widget.startMediationTest,
+          enabled: widget.startMediationTest != null,
         ),
         ListTile(
-          title: const Text("Start debug"),
+          title: const Text("Start inspector"),
+          subtitle: widget.startInspector == null
+              ? const Text("Not implemented")
+              : null,
           onTap: widget.startInspector,
+          enabled: widget.startInspector != null,
         ),
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

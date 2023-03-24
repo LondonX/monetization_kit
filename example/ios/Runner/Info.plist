@@ -24,6 +24,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
     <key>GADApplicationIdentifier</key>
     <string>ca-app-pub-3797955293764288~2989414782</string>
+    <key>AppLovinSdkKey</key>
+    <string>Idz6lyQKWKo9LFSOGCb1QPPOCI7Z6hz8i50adlJXyO2zDizQvU7mGabkgV0-i61hZt6OyVSMOOW2CnZHOT2lql</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

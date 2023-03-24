@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:monetization_kit/monetization_kit.dart';
 
@@ -11,7 +10,6 @@ import 'provider/ad_provider.dart';
 /// [adType] Ad type.
 /// [reloadInterval] Cache duration.
 /// [log] Log callback with multiple args.
-/// [debug] May be [kDebugMode].
 ///
 class AdLoader {
   final List<String> unitIds;
@@ -23,14 +21,12 @@ class AdLoader {
     AdType type,
     String unitId,
   )? log;
-  final bool debug;
 
   AdLoader({
     required this.unitIds,
     required this.adType,
     this.reloadInterval = const Duration(seconds: 30),
     this.log,
-    this.debug = false,
   }) : assert(
           unitIds.isNotEmpty,
         );
@@ -249,7 +245,7 @@ class AdLoader {
   }
 
   _log(Object? object) {
-    if (!debug) return;
+    if (!MonetizationKit.debug) return;
     // ignore: avoid_print
     print("[AdLoader]$object");
   }

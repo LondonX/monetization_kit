@@ -18,7 +18,116 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
-  late final _tab = TabController(length: 3, vsync: this);
+  late final _appPages = [
+    SettingsPage(fakeAnalytics: _fakeAnalytics),
+    // Admob
+    AdProviderPage(
+      native: AdLoader(
+        unitIds: ["ca-app-pub-3940256099942544/1044960115"],
+        adType: AdType.nativeSmall,
+        log: (provider, action, type, unitId) {
+          _fakeAnalytics.log(
+            "AdmobPage(${provider.name})\n${action.name}\n${type.name}\n$unitId",
+          );
+        },
+      ),
+      rewarded: AdLoader(
+        unitIds: ["ca-app-pub-3940256099942544/5224354917"],
+        adType: AdType.rewarded,
+        log: (provider, action, type, unitId) {
+          _fakeAnalytics.log(
+            "AdmobPage(${provider.name})\n${action.name}\n${type.name}\n$unitId",
+          );
+        },
+      ),
+      interstitial: AdLoader(
+        unitIds: ["ca-app-pub-3940256099942544/1033173712"],
+        adType: AdType.interstitial,
+        log: (provider, action, type, unitId) {
+          _fakeAnalytics.log(
+            "AdmobPage(${provider.name})\n${action.name}\n${type.name}\n$unitId",
+          );
+        },
+      ),
+      startMediationTest: MonetizationKit.instance.startAdmobMediationTest,
+      startInspector: MonetizationKit.instance.startAdmobInspector,
+    ),
+    //max
+    AdProviderPage(
+      native: AdLoader(
+        unitIds: ["b98b4d46aac279a7"],
+        adType: AdType.native,
+        log: (provider, action, type, unitId) {
+          _fakeAnalytics.log(
+            "MaxPage(${provider.name})\n${action.name}\n${type.name}\n$unitId",
+          );
+        },
+      ),
+      rewarded: AdLoader(
+        unitIds: ["f1dafda1d3cf071f"],
+        adType: AdType.rewarded,
+        log: (provider, action, type, unitId) {
+          _fakeAnalytics.log(
+            "MaxPage(${provider.name})\n${action.name}\n${type.name}\n$unitId",
+          );
+        },
+      ),
+      interstitial: AdLoader(
+        unitIds: ["87ee2d50d54de7f8"],
+        adType: AdType.interstitial,
+        log: (provider, action, type, unitId) {
+          _fakeAnalytics.log(
+            "MaxPage(${provider.name})\n${action.name}\n${type.name}\n$unitId",
+          );
+        },
+      ),
+      startMediationTest: MonetizationKit.instance.startMaxMediationTest,
+      startInspector: null,
+    ),
+    //mixed
+    AdProviderPage(
+      native: AdLoader(
+        unitIds: [
+          "ca-app-pub-3940256099942544/1044960115",
+          "b98b4d46aac279a7",
+        ],
+        adType: AdType.native,
+        log: (provider, action, type, unitId) {
+          _fakeAnalytics.log(
+            "MixedPage(${provider.name})\n${action.name}\n${type.name}\n$unitId",
+          );
+        },
+      ),
+      rewarded: AdLoader(
+        unitIds: [
+          "ca-app-pub-3940256099942544/5224354917",
+          "f1dafda1d3cf071f",
+        ],
+        adType: AdType.rewarded,
+        log: (provider, action, type, unitId) {
+          _fakeAnalytics.log(
+            "MixedPage(${provider.name})\n${action.name}\n${type.name}\n$unitId",
+          );
+        },
+      ),
+      interstitial: AdLoader(
+        unitIds: [
+          "ca-app-pub-3940256099942544/1033173712",
+          "87ee2d50d54de7f8",
+        ],
+        adType: AdType.interstitial,
+        log: (provider, action, type, unitId) {
+          _fakeAnalytics.log(
+            "MixedPage(${provider.name})\n${action.name}\n${type.name}\n$unitId",
+          );
+        },
+      ),
+      startMediationTest: null,
+      startInspector: null,
+    ),
+  ];
+  final _fakeAnalytics = FakeAnalytics();
+  late final _tab = TabController(length: _appPages.length, vsync: this);
   bool _initFinished = false;
 
   _init() async {
@@ -64,6 +173,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               Tab(text: "Settings"),
               Tab(text: "Admob"),
               Tab(text: "Max"),
+              Tab(text: "Mixed"),
             ],
           ),
         ),
@@ -77,42 +187,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   Widget _buildPager() {
     return TabBarView(
       controller: _tab,
-      children: [
-        const SettingsPage(),
-        AdProviderPage(
-          native: AdLoader(
-            unitIds: ["ca-app-pub-3940256099942544/1044960115"],
-            adType: AdType.nativeSmall,
-          ),
-          rewarded: AdLoader(
-            unitIds: ["ca-app-pub-3940256099942544/5224354917"],
-            adType: AdType.rewarded,
-          ),
-          interstitial: AdLoader(
-            unitIds: ["ca-app-pub-3940256099942544/1033173712"],
-            adType: AdType.interstitial,
-          ),
-          startMediationTest: MonetizationKit.instance.startAdmobMediationTest,
-          startInspector: MonetizationKit.instance.startAdmobInspector,
-        ),
-        //TODO max
-        AdProviderPage(
-          native: AdLoader(
-            unitIds: ["ca-app-pub-3940256099942544/1044960115"],
-            adType: AdType.nativeSmall,
-          ),
-          rewarded: AdLoader(
-            unitIds: ["ca-app-pub-3940256099942544/5224354917"],
-            adType: AdType.rewarded,
-          ),
-          interstitial: AdLoader(
-            unitIds: ["ca-app-pub-3940256099942544/1033173712"],
-            adType: AdType.interstitial,
-          ),
-          startMediationTest: MonetizationKit.instance.startAdmobMediationTest,
-          startInspector: MonetizationKit.instance.startAdmobInspector,
-        ),
-      ],
+      children: _appPages,
     );
   }
 }

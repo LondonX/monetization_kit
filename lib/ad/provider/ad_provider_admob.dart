@@ -8,11 +8,14 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 const _adRequest = AdManagerAdRequest(httpTimeoutMillis: 5000);
 
 class AdProviderAdMob extends AdProvider {
-  const AdProviderAdMob({super.name = "admob"});
+  const AdProviderAdMob({super.name = "Admob"});
 
   @override
   Future<bool> init() async {
     final initStatus = await MobileAds.instance.initialize();
+    debugLog(
+      "Initialize finish with ${initStatus.adapterStatuses.length} adapter(s)",
+    );
     initStatus.adapterStatuses.forEach((key, value) {
       debugLog('Adapter status for $key: ${value.description}');
     });
@@ -33,7 +36,7 @@ class AdProviderAdMob extends AdProvider {
   }) async {
     final adSize = isLarge ? AdSize.largeBanner : AdSize.banner;
     final completer = Completer<bool>();
-    debugLog("buildBannerAd");
+    debugLog("buildBannerAd isLarge: $isLarge");
     final myBanner = BannerAd(
       adUnitId: unitId,
       size: adSize,
@@ -41,13 +44,13 @@ class AdProviderAdMob extends AdProvider {
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           debugLog(
-            "Admob Banner onAdLoaded. unitId: $unitId, size: ${adSize.width}x${adSize.height}",
+            "Banner loaded. unitId: $unitId, size: ${adSize.width}x${adSize.height}",
           );
           completer.complete(true);
         },
         onAdFailedToLoad: (ad, error) {
           debugLog(
-            "Admob Banner onAdFailedToLoad. unitId: $unitId, size: ${adSize.width}x${adSize.height}, error: $error",
+            "Banner load failed. unitId: $unitId, size: ${adSize.width}x${adSize.height}, error: $error",
           );
           completer.complete(false);
         },
@@ -82,20 +85,20 @@ class AdProviderAdMob extends AdProvider {
   }) async {
     final size = isLarge ? "large" : "small";
     final completer = Completer<bool>();
-    debugLog("Admob buildNativeAd");
+    debugLog("buildNativeAd isLarge: $isLarge");
     final nativeAd = NativeAd.fromAdManagerRequest(
       adUnitId: unitId,
       factoryId: "admobNative",
       listener: NativeAdListener(
         onAdLoaded: (ad) {
           debugLog(
-            "Admob Native onAdLoaded. unitId: $unitId, size: $size",
+            "Native loaded. unitId: $unitId, size: $size",
           );
           completer.complete(true);
         },
         onAdFailedToLoad: (ad, error) {
           debugLog(
-            "Admob Native onAdFailedToLoad. unitId: $unitId, size: $size, error: $error",
+            "Native load failed. unitId: $unitId, size: $size, error: $error",
           );
           completer.complete(false);
         },
@@ -131,20 +134,20 @@ class AdProviderAdMob extends AdProvider {
     final completer = Completer<InterstitialAd?>();
     final startAt = DateTime.now();
     int getTimeConsume() => DateTime.now().difference(startAt).inSeconds;
-    debugLog("Admob loadInterstitialAd");
+    debugLog("loadInterstitialAd");
     InterstitialAd.load(
       adUnitId: unitId,
       request: _adRequest,
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
           debugLog(
-            "Admob Interstitial onAdLoaded. unitId: $unitId, time consume: ${getTimeConsume()}s",
+            "Interstitial loaded. unitId: $unitId, time consume: ${getTimeConsume()}s",
           );
           completer.complete(ad);
         },
         onAdFailedToLoad: (error) {
           debugLog(
-            "Admob Interstitial onAdFailedToLoad. unitId: $unitId, error: $error, time consume: ${getTimeConsume()}s",
+            "Interstitial load failed. unitId: $unitId, error: $error, time consume: ${getTimeConsume()}s",
           );
           completer.complete(null);
         },
@@ -181,20 +184,20 @@ class AdProviderAdMob extends AdProvider {
     final completer = Completer<RewardedAd?>();
     final startAt = DateTime.now();
     int getTimeConsume() => DateTime.now().difference(startAt).inSeconds;
-    debugLog("Admob loadRewardedAd");
+    debugLog("loadRewardedAd");
     RewardedAd.load(
       adUnitId: unitId,
       request: _adRequest,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {
           debugLog(
-            "Admob rewarded onAdLoaded. unitId: $unitId, time consume: ${getTimeConsume()}s",
+            "rewarded loaded. unitId: $unitId, time consume: ${getTimeConsume()}s",
           );
           completer.complete(ad);
         },
         onAdFailedToLoad: (error) {
           debugLog(
-            "Admob rewarded onAdFailedToLoad. unitId: $unitId, error: $error, time consume: ${getTimeConsume()}s",
+            "rewarded load failed. unitId: $unitId, error: $error, time consume: ${getTimeConsume()}s",
           );
           completer.complete(null);
         },
@@ -221,8 +224,9 @@ class AdProviderAdMob extends AdProvider {
     final completer = Completer<bool>();
     rewardedAd.show(
       onUserEarnedReward: (ad, rewarded) {
-        debugLog("Admob RewardedAd onUserEarnedReward");
-        completer.complete(true);
+        final isRewarded = rewarded.amount > 0;
+        debugLog("Rewarded finish, isRewarded: $isRewarded");
+        completer.complete(isRewarded);
       },
     );
     return await completer.future;

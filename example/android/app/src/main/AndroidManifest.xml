@@ -8,6 +8,9 @@
         <meta-data
            android:name="com.google.android.gms.ads.APPLICATION_ID"
            android:value="ca-app-pub-3797955293764288~9559510801" />
+       <meta-data
+           android:name="applovin.sdk.key"
+           android:value="Idz6lyQKWKo9LFSOGCb1QPPOCI7Z6hz8i50adlJXyO2zDizQvU7mGabkgV0-i61hZt6OyVSMOOW2CnZHOT2lql" />
 
         <activity
             android:name=".MainActivity"

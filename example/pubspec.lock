@@ -115,6 +115,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.0"
+  max_ad_flutter:
+    dependency: transitive
+    description:
+      path: "../max_ad_flutter"
+      relative: true
+    source: path
+    version: "0.0.1"
   meta:
     dependency: transitive
     description:

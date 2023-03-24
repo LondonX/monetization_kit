@@ -1,6 +1,7 @@
 name: monetization_kit_example
 description: Demonstrates how to use the monetization_kit plugin.
 publish_to: 'none' 
+version: 0.0.1+1
 
 environment:
   sdk: '>=2.19.4 <3.0.0'

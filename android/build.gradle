@@ -69,8 +69,8 @@ dependencies {
     implementation 'com.unity3d.ads:unity-ads:4.6.1'
     implementation 'com.google.ads.mediation:unity:4.6.1.0'
     // Max mediations
-    implementation 'com.applovin.mediation:google-adapter:21.0.0.2'
-    implementation 'com.applovin.mediation:facebook-adapter:6.11.0.4'
-    implementation 'com.applovin.mediation:bytedance-adapter:4.5.0.5.0'
-    implementation 'com.applovin.mediation:unityads-adapter:4.2.1.0'
+    implementation 'com.applovin.mediation:google-adapter:21.5.0.3'
+    implementation 'com.applovin.mediation:facebook-adapter:6.13.7.0'
+    implementation 'com.applovin.mediation:bytedance-adapter:5.0.1.1.0'
+    implementation 'com.applovin.mediation:unityads-adapter:4.6.1.0'
 }
