@@ -2,8 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:monetization_kit/ad/ad_loader.dart';
 import 'package:monetization_kit/ad/entity/ad_enum.dart';
-import 'package:monetization_kit/ad/widget/auto_loading_ad_container.dart';
 import 'package:monetization_kit/monetization_kit.dart';
+import 'package:monetization_kit_example/ad_provider_page.dart';
+import 'package:monetization_kit_example/settings_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,63 +17,9 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  final _adLoaderNative = AdLoader(
-    unitIds: ["ca-app-pub-3940256099942544/1044960115"],
-    adType: AdType.nativeSmall,
-  );
-  final _adLoaderRewarded = AdLoader(
-    unitIds: ["ca-app-pub-3940256099942544/5224354917"],
-    adType: AdType.rewarded,
-  );
-  final _adLoaderInterstitial = AdLoader(
-    unitIds: ["ca-app-pub-3940256099942544/1033173712"],
-    adType: AdType.interstitial,
-  );
-
+class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
+  late final _tab = TabController(length: 3, vsync: this);
   bool _initFinished = false;
-  Object? _rewardedAd;
-  Object? _interstitialAd;
-  bool _rewardedAdLoading = false;
-  bool _interstitialAdLoading = false;
-
-  _loadRewardedAd() async {
-    setState(() {
-      _rewardedAdLoading = true;
-    });
-    final rewardedAd = await _adLoaderRewarded.loadFullscreenAd();
-    setState(() {
-      _rewardedAdLoading = false;
-      _rewardedAd = rewardedAd;
-    });
-  }
-
-  _showRewardedAd() async {
-    final rewarded = await _adLoaderRewarded.showFullscreenAd();
-    if (!rewarded) return;
-    setState(() {
-      _rewardedAd = null;
-    });
-  }
-
-  _loadInterstitialAd() async {
-    setState(() {
-      _interstitialAdLoading = true;
-    });
-    final interstitialAd = await _adLoaderInterstitial.loadFullscreenAd();
-    setState(() {
-      _interstitialAdLoading = false;
-      _interstitialAd = interstitialAd;
-    });
-  }
-
-  _showInterstitialAd() async {
-    final rewarded = await _adLoaderInterstitial.showFullscreenAd();
-    if (!rewarded) return;
-    setState(() {
-      _rewardedAd = null;
-    });
-  }
 
   _init() async {
     MonetizationKit.debug = kDebugMode;
@@ -111,71 +58,61 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('MonetizationKit example'),
+          bottom: TabBar(
+            controller: _tab,
+            tabs: const [
+              Tab(text: "Settings"),
+              Tab(text: "Admob"),
+              Tab(text: "Max"),
+            ],
+          ),
         ),
         body: _initFinished
-            ? ListView(
-                children: [
-                  ListTile(
-                    title: const Text("MonetizationKit initial finished"),
-                    subtitle: Text(
-                        "${MonetizationKit.instance.adProviders.length} AdProviders."),
-                  ),
-                  SwitchListTile(
-                    title: const Text("MonetizationKit.debug"),
-                    value: MonetizationKit.debug,
-                    onChanged: (v) {
-                      setState(() {
-                        MonetizationKit.debug = v;
-                      });
-                    },
-                  ),
-                  AutoLoadingAdContainer(
-                    adLoader: _adLoaderNative,
-                  ),
-                  ListTile(
-                    title: const Text("Load/Show Rewarded Ad"),
-                    onTap: _rewardedAdLoading
-                        ? null
-                        : _rewardedAd == null
-                            ? _loadRewardedAd
-                            : _showRewardedAd,
-                    subtitle: Text(
-                      _rewardedAdLoading
-                          ? "Loading..."
-                          : _rewardedAd == null
-                              ? "Not loaded"
-                              : "✅ Loaded",
-                    ),
-                  ),
-                  ListTile(
-                    title: const Text("Load/Show Interstitial Ad"),
-                    onTap: _interstitialAdLoading
-                        ? null
-                        : _interstitialAd == null
-                            ? _loadInterstitialAd
-                            : _showInterstitialAd,
-                    subtitle: Text(
-                      _interstitialAdLoading
-                          ? "Loading..."
-                          : _interstitialAd == null
-                              ? "Not loaded"
-                              : "✅ Loaded",
-                    ),
-                  ),
-                  ListTile(
-                    title: const Text("Start Admob mediation test"),
-                    onTap: MonetizationKit.instance.startAdmobMediationTest,
-                  ),
-                  ListTile(
-                    title: const Text("Start Admob debug"),
-                    onTap: MonetizationKit.instance.startAdmobInspector,
-                  ),
-                ],
-              )
-            : const Center(
-                child: CircularProgressIndicator(),
-              ),
+            ? _buildPager()
+            : const Center(child: CircularProgressIndicator()),
       ),
+    );
+  }
+
+  Widget _buildPager() {
+    return TabBarView(
+      controller: _tab,
+      children: [
+        const SettingsPage(),
+        AdProviderPage(
+          native: AdLoader(
+            unitIds: ["ca-app-pub-3940256099942544/1044960115"],
+            adType: AdType.nativeSmall,
+          ),
+          rewarded: AdLoader(
+            unitIds: ["ca-app-pub-3940256099942544/5224354917"],
+            adType: AdType.rewarded,
+          ),
+          interstitial: AdLoader(
+            unitIds: ["ca-app-pub-3940256099942544/1033173712"],
+            adType: AdType.interstitial,
+          ),
+          startMediationTest: MonetizationKit.instance.startAdmobMediationTest,
+          startInspector: MonetizationKit.instance.startAdmobInspector,
+        ),
+        //TODO max
+        AdProviderPage(
+          native: AdLoader(
+            unitIds: ["ca-app-pub-3940256099942544/1044960115"],
+            adType: AdType.nativeSmall,
+          ),
+          rewarded: AdLoader(
+            unitIds: ["ca-app-pub-3940256099942544/5224354917"],
+            adType: AdType.rewarded,
+          ),
+          interstitial: AdLoader(
+            unitIds: ["ca-app-pub-3940256099942544/1033173712"],
+            adType: AdType.interstitial,
+          ),
+          startMediationTest: MonetizationKit.instance.startAdmobMediationTest,
+          startInspector: MonetizationKit.instance.startAdmobInspector,
+        ),
+      ],
     );
   }
 }
