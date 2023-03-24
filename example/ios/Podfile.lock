@@ -1,0 +1,385 @@
+PODS:
+  - Ads-Global/APM (4.9.0.8):
+    - RangersAPM-Pangle/Crash (= 3.0.2)
+    - RangersAPM-Pangle/Global (= 3.0.2)
+    - RangersAPM-Pangle/SessionTracker (= 3.0.2)
+  - Ads-Global/BUAdSDK (4.2.5.6):
+    - Ads-Global/BUFoundation
+    - Ads-Global/International
+  - Ads-Global/BUAdSDK_Compatible (4.9.0.8):
+    - Ads-Global/APM
+    - Ads-Global/BURelyAdSDK
+    - Ads-Global/Dep_Compatible
+  - Ads-Global/BUFoundation (4.2.5.6)
+  - Ads-Global/BURelyAdSDK (4.9.0.8)
+  - Ads-Global/Dep_Compatible (4.9.0.8):
+    - BUAdSDK (~> 0.1.0.25)
+    - BURelyFoundation_Global/Pangle (~> 0.0.3.24)
+  - Ads-Global/Domestic (4.2.5.6)
+  - Ads-Global/International (4.2.5.6):
+    - Ads-Global/BUFoundation
+  - AppLovinMediationByteDanceAdapter (4.2.5.6.1):
+    - Ads-Global/BUAdSDK (= 4.2.5.6)
+    - Ads-Global/Domestic (= 4.2.5.6)
+    - AppLovinSDK
+  - AppLovinMediationFacebookAdapter (6.12.0.2):
+    - AppLovinSDK
+    - FBAudienceNetwork (= 6.12.0)
+  - AppLovinMediationGoogleAdapter (9.13.0.0):
+    - AppLovinSDK
+    - Google-Mobile-Ads-SDK (= 9.13.0)
+  - AppLovinMediationUnityAdsAdapter (4.5.0.2):
+    - AppLovinSDK
+    - UnityAds (= 4.5.0)
+  - AppLovinSDK (11.8.2)
+  - BUAdSDK (0.1.0.26):
+    - BUAdSDK/BUAdSDK (= 0.1.0.26)
+  - BUAdSDK/BUAdSDK (0.1.0.26)
+  - BURelyFoundation_Global/AFNetworking (0.0.3.24)
+  - BURelyFoundation_Global/Foundation (0.0.3.24):
+    - BURelyFoundation_Global/NETWork
+  - BURelyFoundation_Global/Gecko (0.0.3.24):
+    - BURelyFoundation_Global/Foundation
+  - BURelyFoundation_Global/Header (0.0.3.24)
+  - BURelyFoundation_Global/NETWork (0.0.3.24):
+    - BURelyFoundation_Global/AFNetworking
+  - BURelyFoundation_Global/Pangle (0.0.3.24):
+    - BURelyFoundation_Global/AFNetworking
+    - BURelyFoundation_Global/Foundation
+    - BURelyFoundation_Global/Gecko
+    - BURelyFoundation_Global/Header
+    - BURelyFoundation_Global/NETWork
+    - BURelyFoundation_Global/SDWebImage
+    - BURelyFoundation_Global/YYModel
+    - BURelyFoundation_Global/ZFPlayer
+    - BURelyFoundation_Global/Zip
+  - BURelyFoundation_Global/SDWebImage (0.0.3.24):
+    - BURelyFoundation_Global/Foundation
+  - BURelyFoundation_Global/YYModel (0.0.3.24)
+  - BURelyFoundation_Global/ZFPlayer (0.0.3.24):
+    - BURelyFoundation_Global/Foundation
+    - BURelyFoundation_Global/Zip
+  - BURelyFoundation_Global/Zip (0.0.3.24):
+    - BURelyFoundation_Global/Foundation
+  - FBAudienceNetwork (6.12.0)
+  - Flutter (1.0.0)
+  - Google-Mobile-Ads-SDK (9.13.0):
+    - GoogleAppMeasurement (< 11.0, >= 7.0)
+    - GoogleUserMessagingPlatform (>= 1.1)
+  - google_mobile_ads (0.0.1):
+    - Flutter
+    - Google-Mobile-Ads-SDK (~> 9.13)
+  - GoogleAppMeasurement (10.7.0):
+    - GoogleAppMeasurement/AdIdSupport (= 10.7.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
+    - GoogleUtilities/MethodSwizzler (~> 7.8)
+    - GoogleUtilities/Network (~> 7.8)
+    - "GoogleUtilities/NSData+zlib (~> 7.8)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleAppMeasurement/AdIdSupport (10.7.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 10.7.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
+    - GoogleUtilities/MethodSwizzler (~> 7.8)
+    - GoogleUtilities/Network (~> 7.8)
+    - "GoogleUtilities/NSData+zlib (~> 7.8)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleAppMeasurement/WithoutAdIdSupport (10.7.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
+    - GoogleUtilities/MethodSwizzler (~> 7.8)
+    - GoogleUtilities/Network (~> 7.8)
+    - "GoogleUtilities/NSData+zlib (~> 7.8)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleMobileAdsMediationFacebook (6.12.0.0):
+    - FBAudienceNetwork (= 6.12.0)
+    - Google-Mobile-Ads-SDK (~> 9.8)
+  - GoogleMobileAdsMediationPangle (4.9.0.8.0):
+    - Ads-Global/BUAdSDK_Compatible (= 4.9.0.8)
+    - Google-Mobile-Ads-SDK (~> 9.8)
+  - GoogleMobileAdsMediationTestSuite (3.0.0):
+    - Google-Mobile-Ads-SDK (>= 9.0.0)
+    - MaterialComponents/Cards (~> 124.0)
+    - MaterialComponents/Dialogs (~> 124.0)
+    - "MaterialComponents/Dialogs+Theming (~> 124.0)"
+    - MaterialComponents/Tabs (~> 124.0)
+  - GoogleMobileAdsMediationUnity (4.5.0.0):
+    - Google-Mobile-Ads-SDK (~> 9.8)
+    - UnityAds (= 4.5.0)
+  - GoogleUserMessagingPlatform (2.0.1)
+  - GoogleUtilities/AppDelegateSwizzler (7.11.0):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+  - GoogleUtilities/Environment (7.11.0):
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/Logger (7.11.0):
+    - GoogleUtilities/Environment
+  - GoogleUtilities/MethodSwizzler (7.11.0):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/Network (7.11.0):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (7.11.0)"
+  - GoogleUtilities/Reachability (7.11.0):
+    - GoogleUtilities/Logger
+  - MaterialComponents/AnimationTiming (124.2.0)
+  - MaterialComponents/Availability (124.2.0)
+  - MaterialComponents/Buttons (124.2.0):
+    - MaterialComponents/Elevation
+    - MaterialComponents/Ink
+    - MaterialComponents/private/Math
+    - MaterialComponents/Ripple
+    - MaterialComponents/Shadow
+    - MaterialComponents/ShadowElevations
+    - MaterialComponents/ShadowLayer
+    - MaterialComponents/ShapeLibrary
+    - MaterialComponents/Shapes
+    - MaterialComponents/Typography
+    - MDFInternationalization
+    - MDFTextAccessibility
+  - "MaterialComponents/Buttons+ColorThemer (124.2.0)":
+    - MaterialComponents/Buttons
+    - MaterialComponents/schemes/Color
+  - "MaterialComponents/Buttons+ShapeThemer (124.2.0)":
+    - MaterialComponents/Buttons
+    - MaterialComponents/schemes/Shape
+  - "MaterialComponents/Buttons+Theming (124.2.0)":
+    - MaterialComponents/Buttons
+    - "MaterialComponents/Buttons+ColorThemer"
+    - "MaterialComponents/Buttons+ShapeThemer"
+    - "MaterialComponents/Buttons+TypographyThemer"
+    - MaterialComponents/schemes/Container
+    - MaterialComponents/ShadowElevations
+  - "MaterialComponents/Buttons+TypographyThemer (124.2.0)":
+    - MaterialComponents/Buttons
+    - MaterialComponents/schemes/Typography
+  - MaterialComponents/Cards (124.2.0):
+    - MaterialComponents/Elevation
+    - MaterialComponents/Ink
+    - MaterialComponents/private/Icons/ic_check_circle
+    - MaterialComponents/private/Math
+    - MaterialComponents/Ripple
+    - MaterialComponents/ShadowLayer
+    - MaterialComponents/Shapes
+  - MaterialComponents/Dialogs (124.2.0):
+    - MaterialComponents/Buttons
+    - MaterialComponents/Elevation
+    - MaterialComponents/private/KeyboardWatcher
+    - MaterialComponents/private/Math
+    - MaterialComponents/ShadowElevations
+    - MaterialComponents/ShadowLayer
+    - MaterialComponents/Typography
+    - MDFInternationalization
+  - "MaterialComponents/Dialogs+ColorThemer (124.2.0)":
+    - "MaterialComponents/Buttons+ColorThemer"
+    - MaterialComponents/Dialogs
+    - MaterialComponents/Themes
+  - "MaterialComponents/Dialogs+Theming (124.2.0)":
+    - "MaterialComponents/Buttons+Theming"
+    - MaterialComponents/Dialogs
+    - "MaterialComponents/Dialogs+ColorThemer"
+    - "MaterialComponents/Dialogs+TypographyThemer"
+    - MaterialComponents/schemes/Container
+    - MaterialComponents/ShadowElevations
+  - "MaterialComponents/Dialogs+TypographyThemer (124.2.0)":
+    - "MaterialComponents/Buttons+TypographyThemer"
+    - MaterialComponents/Dialogs
+    - MaterialComponents/schemes/Typography
+  - MaterialComponents/Elevation (124.2.0):
+    - MaterialComponents/Availability
+    - MaterialComponents/private/Color
+    - MaterialComponents/private/Math
+  - MaterialComponents/Ink (124.2.0):
+    - MaterialComponents/Availability
+    - MaterialComponents/private/Color
+    - MaterialComponents/private/Math
+  - MaterialComponents/Palettes (124.2.0)
+  - MaterialComponents/private/Application (124.2.0)
+  - MaterialComponents/private/Color (124.2.0):
+    - MaterialComponents/Availability
+  - MaterialComponents/private/Icons/Base (124.2.0)
+  - MaterialComponents/private/Icons/ic_check_circle (124.2.0):
+    - MaterialComponents/private/Icons/Base
+  - MaterialComponents/private/KeyboardWatcher (124.2.0):
+    - MaterialComponents/private/Application
+  - MaterialComponents/private/Math (124.2.0)
+  - MaterialComponents/Ripple (124.2.0):
+    - MaterialComponents/AnimationTiming
+    - MaterialComponents/Availability
+    - MaterialComponents/private/Color
+    - MaterialComponents/private/Math
+  - MaterialComponents/schemes/Color (124.2.0):
+    - MaterialComponents/Availability
+    - MaterialComponents/private/Color
+  - MaterialComponents/schemes/Container (124.2.0):
+    - MaterialComponents/schemes/Color
+    - MaterialComponents/schemes/Shape
+    - MaterialComponents/schemes/Typography
+  - MaterialComponents/schemes/Shape (124.2.0):
+    - MaterialComponents/ShapeLibrary
+    - MaterialComponents/Shapes
+  - MaterialComponents/schemes/Typography (124.2.0):
+    - "MaterialComponents/schemes/Typography+BasicFontScheme"
+    - "MaterialComponents/schemes/Typography+Scheming"
+    - MaterialComponents/Typography
+  - "MaterialComponents/schemes/Typography+BasicFontScheme (124.2.0)"
+  - "MaterialComponents/schemes/Typography+Scheming (124.2.0)"
+  - MaterialComponents/Shadow (124.2.0):
+    - MaterialComponents/Availability
+  - MaterialComponents/ShadowElevations (124.2.0)
+  - MaterialComponents/ShadowLayer (124.2.0):
+    - MaterialComponents/ShadowElevations
+  - MaterialComponents/ShapeLibrary (124.2.0):
+    - MaterialComponents/private/Math
+    - MaterialComponents/Shapes
+  - MaterialComponents/Shapes (124.2.0):
+    - MaterialComponents/private/Color
+    - MaterialComponents/private/Math
+    - MaterialComponents/ShadowLayer
+  - MaterialComponents/Tabs (124.2.0):
+    - MaterialComponents/AnimationTiming
+    - MaterialComponents/Elevation
+    - MaterialComponents/Ink
+    - MaterialComponents/Palettes
+    - MaterialComponents/private/Math
+    - MaterialComponents/Ripple
+    - MaterialComponents/ShadowElevations
+    - MaterialComponents/ShadowLayer
+    - MaterialComponents/Typography
+    - MDFInternationalization
+  - MaterialComponents/Themes (124.2.0):
+    - MaterialComponents/schemes/Color
+    - MaterialComponents/schemes/Typography
+  - MaterialComponents/Typography (124.2.0):
+    - MaterialComponents/private/Application
+    - MaterialComponents/private/Math
+    - MDFTextAccessibility
+  - MDFInternationalization (3.0.0)
+  - MDFTextAccessibility (2.0.1)
+  - monetization_kit (0.0.1):
+    - AppLovinMediationByteDanceAdapter
+    - AppLovinMediationFacebookAdapter
+    - AppLovinMediationGoogleAdapter (~> 9.13.0)
+    - AppLovinMediationUnityAdsAdapter
+    - Flutter
+    - google_mobile_ads
+    - GoogleMobileAdsMediationFacebook
+    - GoogleMobileAdsMediationPangle
+    - GoogleMobileAdsMediationTestSuite
+    - GoogleMobileAdsMediationUnity
+  - nanopb (2.30909.0):
+    - nanopb/decode (= 2.30909.0)
+    - nanopb/encode (= 2.30909.0)
+  - nanopb/decode (2.30909.0)
+  - nanopb/encode (2.30909.0)
+  - OneKit-Pangle/BaseKit (1.3.11)
+  - OneKit-Pangle/Database (1.3.11):
+    - OneKit-Pangle/Service
+  - OneKit-Pangle/Reachability (1.3.11):
+    - OneKit-Pangle/Service
+  - OneKit-Pangle/Service (1.3.11)
+  - PromisesObjC (2.2.0)
+  - RangersAPM-Pangle/Above (3.0.2)
+  - RangersAPM-Pangle/Core (3.0.2):
+    - OneKit-Pangle/BaseKit (= 1.3.11)
+  - RangersAPM-Pangle/Crash (3.0.2):
+    - RangersAPM-Pangle/Core
+    - RangersAPM-Pangle/HMD
+    - RangersAPM-Pangle/Public
+  - RangersAPM-Pangle/Global (3.0.2):
+    - RangersAPM-Pangle/Core
+    - RangersAPM-Pangle/Public
+  - RangersAPM-Pangle/HMD (3.0.2):
+    - OneKit-Pangle/Database (= 1.3.11)
+    - RangersAPM-Pangle/Core
+  - RangersAPM-Pangle/Public (3.0.2):
+    - RangersAPM-Pangle/Above
+    - RangersAPM-Pangle/Core
+    - RangersAPM-Pangle/Zyone
+    - RARegisterKit-Pangle/Core (= 0.0.7)
+  - RangersAPM-Pangle/SessionTracker (3.0.2):
+    - RangersAPM-Pangle/Core
+    - RangersAPM-Pangle/HMD
+    - RangersAPM-Pangle/Public
+  - RangersAPM-Pangle/Zyone (3.0.2)
+  - RARegisterKit-Pangle/Core (0.0.7):
+    - OneKit-Pangle/BaseKit (= 1.3.11)
+    - OneKit-Pangle/Reachability (= 1.3.11)
+  - UnityAds (4.5.0)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - google_mobile_ads (from `.symlinks/plugins/google_mobile_ads/ios`)
+  - monetization_kit (from `.symlinks/plugins/monetization_kit/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Ads-Global
+    - AppLovinMediationByteDanceAdapter
+    - AppLovinMediationFacebookAdapter
+    - AppLovinMediationGoogleAdapter
+    - AppLovinMediationUnityAdsAdapter
+    - AppLovinSDK
+    - BUAdSDK
+    - BURelyFoundation_Global
+    - FBAudienceNetwork
+    - Google-Mobile-Ads-SDK
+    - GoogleAppMeasurement
+    - GoogleMobileAdsMediationFacebook
+    - GoogleMobileAdsMediationPangle
+    - GoogleMobileAdsMediationTestSuite
+    - GoogleMobileAdsMediationUnity
+    - GoogleUserMessagingPlatform
+    - GoogleUtilities
+    - MaterialComponents
+    - MDFInternationalization
+    - MDFTextAccessibility
+    - nanopb
+    - OneKit-Pangle
+    - PromisesObjC
+    - RangersAPM-Pangle
+    - RARegisterKit-Pangle
+    - UnityAds
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  google_mobile_ads:
+    :path: ".symlinks/plugins/google_mobile_ads/ios"
+  monetization_kit:
+    :path: ".symlinks/plugins/monetization_kit/ios"
+
+SPEC CHECKSUMS:
+  Ads-Global: 1f71d4efe00bf268d92786bb8a21353485a445ea
+  AppLovinMediationByteDanceAdapter: 20a8d1c76d7d6683862481f6187a1aafa623186a
+  AppLovinMediationFacebookAdapter: 40a6166c59a9946ab18db01aa7ab42c4de209d90
+  AppLovinMediationGoogleAdapter: cd055c4270706e3290c60775107116734204085a
+  AppLovinMediationUnityAdsAdapter: 6222395b73114fbb2082ed397fba22d6c4c7b86a
+  AppLovinSDK: cfcf1972d25febb4c0f23837763e3809f0fba159
+  BUAdSDK: 6ca2a94b083208150cda71b4a637aaadca6d1d45
+  BURelyFoundation_Global: ef8caf02fb100ad85e29ffc4c76a0efb45f37d24
+  FBAudienceNetwork: e0fcc9091fced34910ed0b6da06f129db46ac9e6
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Google-Mobile-Ads-SDK: 465532d33dfc878f2f9aca281fddbcd4bf9c0197
+  google_mobile_ads: 6bfe04d9c9fd5c2a026e6f09ca2d97ae25b78f7e
+  GoogleAppMeasurement: fe17c92a32207dd5cdd4e8d742767f2da74857f6
+  GoogleMobileAdsMediationFacebook: 8c64904ac98459c8819cf07de3e15d5663b3d8ec
+  GoogleMobileAdsMediationPangle: c276e1604322fd58496d3f9de6e8c5ce7a386290
+  GoogleMobileAdsMediationTestSuite: 072c67cb9b10b6f7847b0733baadf7c77e2d737f
+  GoogleMobileAdsMediationUnity: 512b2b1f3ad3d04d9d429bad6ab8e394534bd7ee
+  GoogleUserMessagingPlatform: 5f8b30daf181805317b6b985bb51c1ff3beca054
+  GoogleUtilities: c2bdc4cf2ce786c4d2e6b3bcfd599a25ca78f06f
+  MaterialComponents: 1a9b2d9d45b1601ae544de85089adc4c464306d4
+  MDFInternationalization: d697c55307816222a55685c4ccb1044ffb030c12
+  MDFTextAccessibility: f4bb4cc2194286651b59a215fdeaa0e05dc90ba5
+  monetization_kit: 48633d7f0bb44a873ebeb753f5f8dc84e8147d20
+  nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
+  OneKit-Pangle: 19fc175cb04d0830594808f470751d3d2ab14318
+  PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
+  RangersAPM-Pangle: d2cc7e3887f0febfd82a1c91de96ec831fb584d1
+  RARegisterKit-Pangle: b840cfa2b841389f88959504aaf62ce2730a18d1
+  UnityAds: fab621d1066e414af9ce884f1252cdd53894263e
+
+PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
+
+COCOAPODS: 1.11.3
