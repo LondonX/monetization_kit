@@ -13,7 +13,6 @@ class _IAPPageState extends State<IAPPage> {
   final _refresher = GlobalKey<RefreshIndicatorState>();
   final _products = <ProductDetails>[];
   bool _restoring = false;
-  bool _purchasing = false;
 
   Future<void> _refresh() async {
     final products = await MonetizationKit.instance.iap
