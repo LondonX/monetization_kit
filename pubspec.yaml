@@ -5,7 +5,7 @@ homepage: "https://github.com/LondonX/monetization_kit"
 publish_to: none
 
 environment:
-  sdk: '>=2.19.4 <3.0.0'
+  sdk: ">=2.19.4 <3.0.0"
   flutter: ">=2.5.0"
 
 dependencies:
@@ -13,8 +13,11 @@ dependencies:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
 
+  path_provider:
+
   visibility_detector: ^0.3.3
   google_mobile_ads: ^2.3.0
+  in_app_purchase: ^3.1.5
 
   max_ad_flutter:
     path: ./max_ad_flutter
@@ -32,5 +35,3 @@ flutter:
         pluginClass: MonetizationKitPlugin
       ios:
         pluginClass: MonetizationKitPlugin
-
-

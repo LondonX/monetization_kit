@@ -6,8 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'load_result.dart';
 
 class MaxAdFlutter {
-  static MaxAdFlutter? _instance;
-  static MaxAdFlutter get instance => _instance ??= MaxAdFlutter._();
+  static MaxAdFlutter instance = MaxAdFlutter._();
   final _channel = const MethodChannel("max_ad_flutter");
 
   MaxAdFlutter._() {

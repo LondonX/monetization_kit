@@ -4,6 +4,7 @@ import 'package:monetization_kit/ad/ad_loader.dart';
 import 'package:monetization_kit/ad/entity/ad_enum.dart';
 import 'package:monetization_kit/monetization_kit.dart';
 import 'package:monetization_kit_example/ad_provider_page.dart';
+import 'package:monetization_kit_example/iap_page.dart';
 import 'package:monetization_kit_example/settings_page.dart';
 
 void main() {
@@ -125,14 +126,49 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
       startMediationTest: null,
       startInspector: null,
     ),
+    //IAP
+    const IAPPage(),
   ];
   final _fakeAnalytics = FakeAnalytics();
   late final _tab = TabController(length: _appPages.length, vsync: this);
   bool _initFinished = false;
 
+  late BuildContext _uiContext;
+  Future<bool> _purchaseVerify(
+    String productId,
+    String serverVerificationData,
+  ) async {
+    final passed = await showDialog<bool>(
+      context: _uiContext,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Purchase Verify"),
+          content: SelectableText(
+            "This is a dummy purchase verifier.\nProductId: $productId\nVerificationData: $serverVerificationData",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text("Pass Verify"),
+            ),
+            TextButton(
+              onPressed: Navigator.of(context).pop,
+              child: const Text("Deny Verify"),
+            ),
+          ],
+        );
+      },
+    );
+    return passed == true;
+  }
+
   _init() async {
     MonetizationKit.debug = kDebugMode;
-    final initFinished = await MonetizationKit.instance.init();
+    final initFinished = await MonetizationKit.instance.init(
+      verifyPurchase: _purchaseVerify,
+    );
     setState(() {
       _initFinished = initFinished;
     });
@@ -164,23 +200,27 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('MonetizationKit example'),
-          bottom: TabBar(
-            controller: _tab,
-            tabs: const [
-              Tab(text: "Settings"),
-              Tab(text: "Admob"),
-              Tab(text: "Max"),
-              Tab(text: "Mixed"),
-            ],
+      home: Builder(builder: (context) {
+        _uiContext = context;
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('MonetizationKit example'),
+            bottom: TabBar(
+              controller: _tab,
+              tabs: const [
+                Tab(text: "Settings"),
+                Tab(text: "Admob"),
+                Tab(text: "Max"),
+                Tab(text: "Mixed"),
+                Tab(text: "IAP."),
+              ],
+            ),
           ),
-        ),
-        body: _initFinished
-            ? _buildPager()
-            : const Center(child: CircularProgressIndicator()),
-      ),
+          body: _initFinished
+              ? _buildPager()
+              : const Center(child: CircularProgressIndicator()),
+        );
+      }),
     );
   }
 
