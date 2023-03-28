@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:max_ad_flutter/max_ad_flutter.dart';
+import 'package:monetization_kit/ad/max/max_ad_helper.dart';
 import '../widget/ad_visibility.dart';
 import 'ad_provider.dart';
 
 class AdProviderMax extends AdProvider {
   const AdProviderMax({super.name = "Max"});
 
-  MaxAdFlutter get _maxAd => MaxAdFlutter.instance;
+  MaxAdHelper get _maxAd => MaxAdHelper.instance;
 
   @override
   Future<bool> init() async {

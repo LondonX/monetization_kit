@@ -1,6 +1,7 @@
 package com.LondonX.monetization_kit
 
 import android.app.Activity
+import com.LondonX.monetization_kit.max.MaxPluginHelper
 import com.google.android.ads.mediationtestsuite.MediationTestSuite
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -15,8 +16,10 @@ import io.flutter.plugins.googlemobileads.GoogleMobileAdsPlugin
 class MonetizationKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var channel: MethodChannel
     private lateinit var flutterEngine: FlutterEngine
+    private lateinit var maxPluginHelper: MaxPluginHelper
+
     private var activity: Activity? = null
-    val requireActivity get() = activity!!
+    private val requireActivity get() = activity!!
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "monetization_kit")
@@ -24,9 +27,11 @@ class MonetizationKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         @Suppress("DEPRECATION")
         flutterEngine = flutterPluginBinding.flutterEngine
+        maxPluginHelper = MaxPluginHelper(flutterPluginBinding.platformViewRegistry, channel)
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
+        if (activity != null && maxPluginHelper.onMethodCall(call, result, requireActivity)) return
         val args = call.arguments as? Map<*, *>
         when (call.method) {
             "initAds" -> {

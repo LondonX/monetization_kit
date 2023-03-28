@@ -5,26 +5,28 @@ import 'package:flutter/widgets.dart';
 
 import 'load_result.dart';
 
-class MaxAdFlutter {
-  static MaxAdFlutter instance = MaxAdFlutter._();
-  final _channel = const MethodChannel("max_ad_flutter");
+class MaxAdHelper {
+  static MaxAdHelper instance = MaxAdHelper._();
+  late MethodChannel _channel;
 
-  MaxAdFlutter._() {
+  MaxAdHelper._();
+  setChannel(MethodChannel channel) {
+    _channel = channel;
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
-        case "onAdClick":
+        case "max_onAdClick":
           final adKey = (call.arguments as Map)["adKey"];
           adClickListeners[adKey]?.call();
           break;
-        case "onFullscreenAdShow":
+        case "max_onFullscreenAdShow":
           final adKey = (call.arguments as Map)["adKey"];
           fullscreenAdShowListeners[adKey]?.call();
           break;
-        case "onFullscreenAdDismiss":
+        case "max_onFullscreenAdDismiss":
           final adKey = (call.arguments as Map)["adKey"];
           fullscreenAdDismissListeners[adKey]?.call();
           break;
-        case "onRewarded":
+        case "max_onRewarded":
           final adKey = (call.arguments as Map)["adKey"];
           adRewardedListeners[adKey]?.call(true);
           break;
@@ -36,7 +38,7 @@ class MaxAdFlutter {
     if (raw == null) {
       return const LoadResult(
         adKey: null,
-        error: {"code": -1, "message": "channel returns null."},
+        error: {"code": -1, "message": "_channel returns null."},
       );
     }
     try {
@@ -44,21 +46,21 @@ class MaxAdFlutter {
     } catch (e) {
       return const LoadResult(
         adKey: null,
-        error: {"code": -2, "message": "channel returns decode failed."},
+        error: {"code": -2, "message": "_channel returns decode failed."},
       );
     }
   }
 
   Future<Map<String, dynamic>?> initializeSdk() async {
     final raw = await _channel.invokeMapMethod<String, dynamic>(
-      "initializeSdk",
+      "max_initializeSdk",
     );
     return raw == null ? null : Map.from(raw);
   }
 
   Future<LoadResult> loadBannerAd(String unitId) async {
     final raw = await _channel.invokeMapMethod(
-      "loadBannerAd",
+      "max_loadBannerAd",
       {"unitId": unitId},
     );
     return resolveLoadResult(raw);
@@ -66,7 +68,7 @@ class MaxAdFlutter {
 
   Future<LoadResult> loadNativeAd(String unitId) async {
     final raw = await _channel.invokeMapMethod(
-      "loadNativeAd",
+      "max_loadNativeAd",
       {"unitId": unitId},
     );
     return resolveLoadResult(raw);
@@ -97,7 +99,7 @@ class MaxAdFlutter {
     }
     return Center(
       child: Text(
-        "MaxAdFlutter buildNativeAd for ${Platform.operatingSystem} is not implemented.",
+        "MaxAdHelper buildNativeAd for ${Platform.operatingSystem} is not implemented.",
       ),
     );
   }
@@ -133,7 +135,7 @@ class MaxAdFlutter {
     } else {
       platformView = Center(
         child: Text(
-          "MaxAdFlutter buildBanner for ${Platform.operatingSystem} is not implemented.",
+          "MaxAdHelper buildBanner for ${Platform.operatingSystem} is not implemented.",
         ),
       );
     }
@@ -150,7 +152,7 @@ class MaxAdFlutter {
     required Function() onDismiss,
   }) async {
     final raw = await _channel.invokeMapMethod<String, dynamic>(
-      "loadInterstitialAd",
+      "max_loadInterstitialAd",
       {"unitId": unitId},
     );
     final result = resolveLoadResult(raw);
@@ -165,7 +167,7 @@ class MaxAdFlutter {
   Future<bool> showInterstitialAd(String adKey) async {
     return true ==
         await _channel.invokeMethod<bool>(
-          "showInterstitialAd",
+          "max_showInterstitialAd",
           {"adKey": adKey},
         );
   }
@@ -177,7 +179,7 @@ class MaxAdFlutter {
     required Function() onDismiss,
   }) async {
     final raw = await _channel.invokeMapMethod<String, dynamic>(
-      "loadRewardedAd",
+      "max_loadRewardedAd",
       {"unitId": unitId},
     );
     final result = resolveLoadResult(raw);
@@ -196,12 +198,12 @@ class MaxAdFlutter {
     adRewardedListeners[adKey] = onRewarded;
     return true ==
         await _channel.invokeMethod<bool>(
-          "showRewardedAd",
+          "max_showRewardedAd",
           {"adKey": adKey},
         );
   }
 
   Future showMediationDebugger() async {
-    await _channel.invokeMethod("showMediationDebugger");
+    await _channel.invokeMethod("max_showMediationDebugger");
   }
 }

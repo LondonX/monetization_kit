@@ -1,4 +1,4 @@
-package com.LondonX.max_ad_flutter
+package com.LondonX.monetization_kit.max
 
 import android.content.Context
 import android.util.Log
@@ -8,13 +8,13 @@ import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
 
-class MaxBannerAdViewFactory :
+class MaxBannerAdViewFactory(private val adViewsPool: HashMap<String, View?>) :
     PlatformViewFactory(StandardMessageCodec.INSTANCE) {
     override fun create(context: Context?, viewId: Int, args: Any?): PlatformView {
         if (context == null) return buildEmptyPlatformView()
         val creationParams = args as? Map<*, *>
         val adKey = creationParams?.get("adKey")?.toString()
-        val adView = MaxAdFlutterPlugin.adViewsPool[adKey] as? MaxAdView
+        val adView = adViewsPool[adKey] as? MaxAdView
         if (adKey.isNullOrBlank()) {
             Log.w(
                 "MaxAdFlutter",

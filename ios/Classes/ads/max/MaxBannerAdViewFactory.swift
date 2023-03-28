@@ -7,12 +7,13 @@
 
 import Foundation
 import AppLovinSDK
+import Flutter
 
 class MaxBannerAdViewFactory : NSObject, FlutterPlatformViewFactory {
-    let pluginInstance: SwiftMaxAdFlutterPlugin
+    let maxAdHelper: MaxAdHelper
     
-    init(pluginInstance: SwiftMaxAdFlutterPlugin) {
-        self.pluginInstance = pluginInstance
+    init(maxAdHelper: MaxAdHelper) {
+        self.maxAdHelper = maxAdHelper
         super.init()
     }
     
@@ -30,12 +31,12 @@ class MaxBannerAdViewFactory : NSObject, FlutterPlatformViewFactory {
         if(adKey == nil) {
             return SimplePlatformView()
         }
-        let view = pluginInstance.adViewsPool[adKey!]
+        let view = maxAdHelper.adViewsPool[adKey!]
         let adView = view as? MAAdView
         adView?.frame = CGRect(x: 0, y: 0, width: 320, height: 50)
         return SimplePlatformView(uiView: view as? UIView) {
             adView?.stopAutoRefresh()
-            self.pluginInstance.adViewsPool.removeValue(forKey: adKey!)
+            self.maxAdHelper.adViewsPool.removeValue(forKey: adKey!)
         }
     }
 }

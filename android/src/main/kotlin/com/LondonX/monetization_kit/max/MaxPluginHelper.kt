@@ -1,12 +1,10 @@
-package com.LondonX.max_ad_flutter
+package com.LondonX.monetization_kit.max
 
 import android.app.Activity
-import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.NonNull
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdViewAdListener
 import com.applovin.mediation.MaxError
@@ -20,91 +18,79 @@ import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkConfiguration
-import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.embedding.engine.plugins.activity.ActivityAware
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
+import io.flutter.plugin.platform.PlatformViewRegistry
 import java.util.*
+import kotlin.math.roundToInt
 
-class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
-    private lateinit var channel: MethodChannel
-    private lateinit var context: Context
-    private lateinit var activity: Activity
+class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: MethodChannel) {
 
-    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "max_ad_flutter")
-        channel.setMethodCallHandler(this)
-        context = flutterPluginBinding.applicationContext
-        flutterPluginBinding.platformViewRegistry.registerViewFactory(
+    val adLoadersPool = hashMapOf<String, MaxNativeAdLoader>()
+    val adViewsPool = hashMapOf<String, View?>()
+    val interstitialAdsPool = hashMapOf<String, MaxInterstitialAd>()
+    val rewardedAdsPool = hashMapOf<String, MaxRewardedAd>()
+
+    init {
+        registry.registerViewFactory(
             "max_native_ad_template",
-            MaxNativeAdViewFactory(),
+            MaxNativeAdViewFactory(adViewsPool, adLoadersPool),
         )
-        flutterPluginBinding.platformViewRegistry.registerViewFactory(
+        registry.registerViewFactory(
             "max_banner",
-            MaxBannerAdViewFactory(),
+            MaxBannerAdViewFactory(adViewsPool),
         )
     }
 
-    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+    private lateinit var activity: Activity
+
+    fun onMethodCall(call: MethodCall, result: MethodChannel.Result, activity: Activity): Boolean {
+        this.activity = activity
         when (call.method) {
-            "initializeSdk" -> {
-                AppLovinSdk.getInstance(context).settings.setVerboseLogging(true)
-                AppLovinSdk.getInstance(context).mediationProvider = AppLovinMediationProvider.MAX
-                AppLovinSdk.initializeSdk(context) {
+            "max_initializeSdk" -> {
+                AppLovinSdk.getInstance(activity).settings.setVerboseLogging(true)
+                AppLovinSdk.getInstance(activity).mediationProvider = AppLovinMediationProvider.MAX
+                AppLovinSdk.initializeSdk(activity) {
                     result.success(it.toMap())
                 }
             }
-            "loadBannerAd" -> {
+            "max_loadBannerAd" -> {
                 val unitId = call.argument<String>("unitId")
                 loadBannerAd(unitId!!, result)
             }
-            "loadNativeAd" -> {
+            "max_loadNativeAd" -> {
                 val unitId = call.argument<String>("unitId")
                 loadNativeAd(unitId!!, result)
             }
-            "loadInterstitialAd" -> {
+            "max_loadInterstitialAd" -> {
                 val unitId = call.argument<String>("unitId")
                 loadInterstitialAd(unitId!!, result)
             }
-            "showInterstitialAd" -> {
+            "max_showInterstitialAd" -> {
                 val adKey = call.argument<String>("adKey")
                 showInterstitialAd(adKey, result)
             }
-            "loadRewardedAd" -> {
+            "max_loadRewardedAd" -> {
                 val unitId = call.argument<String>("unitId")
                 loadRewardedAd(unitId!!, result)
             }
-            "showRewardedAd" -> {
+            "max_showRewardedAd" -> {
                 val adKey = call.argument<String>("adKey")
                 showRewardedAd(adKey, result)
             }
-            "showMediationDebugger" -> {
-                AppLovinSdk.getInstance(context).showMediationDebugger()
+            "max_showMediationDebugger" -> {
+                AppLovinSdk.getInstance(activity).showMediationDebugger()
             }
-            else -> {
-                result.notImplemented()
-            }
+            else -> return false
         }
+        return true
     }
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
-    }
-
-    companion object {
-        val adLoadersPool = hashMapOf<String, MaxNativeAdLoader>()
-        val adViewsPool = hashMapOf<String, View?>()
-        val interstitialAdsPool = hashMapOf<String, MaxInterstitialAd>()
-        val rewardedAdsPool = hashMapOf<String, MaxRewardedAd>()
-    }
 
     /**
      *  InterstitialAd
      */
-    private fun loadInterstitialAd(unitId: String, result: Result) {
+    private fun loadInterstitialAd(unitId: String, result: MethodChannel.Result) {
         val interstitialAd = MaxInterstitialAd(unitId, activity)
         val adKey = UUID.randomUUID().toString()
         interstitialAd.setListener(object : SimpleMaxAdListener() {
@@ -132,7 +118,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             override fun onAdClicked(ad: MaxAd?) {
                 super.onAdClicked(ad)
                 channel.invokeMethod(
-                    "onAdClick",
+                    "max_onAdClick",
                     mapOf<String, Any?>("adKey" to adKey),
                 )
             }
@@ -140,7 +126,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             override fun onAdDisplayed(ad: MaxAd?) {
                 super.onAdDisplayed(ad)
                 channel.invokeMethod(
-                    "onFullscreenAdShow",
+                    "max_onFullscreenAdShow",
                     mapOf<String, Any?>("adKey" to adKey),
                 )
             }
@@ -148,7 +134,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             override fun onAdHidden(ad: MaxAd?) {
                 super.onAdHidden(ad)
                 channel.invokeMethod(
-                    "onFullscreenAdDismiss",
+                    "max_onFullscreenAdDismiss",
                     mapOf<String, Any?>("adKey" to adKey),
                 )
             }
@@ -156,7 +142,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         interstitialAd.loadAd()
     }
 
-    private fun showInterstitialAd(adKey: String?, result: Result) {
+    private fun showInterstitialAd(adKey: String?, result: MethodChannel.Result) {
         val interstitialAd = interstitialAdsPool[adKey]
         if (interstitialAd == null) {
             Log.w(
@@ -168,8 +154,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
         if (!interstitialAd.isReady) {
             Log.w(
-                "MaxAdFlutter",
-                "InterstitialAd with adKey: $adKey not ready."
+                "MaxAdFlutter", "InterstitialAd with adKey: $adKey not ready."
             )
             result.success(false)
             return
@@ -182,7 +167,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     /**
      *  RewardedAd
      */
-    private fun loadRewardedAd(unitId: String, result: Result) {
+    private fun loadRewardedAd(unitId: String, result: MethodChannel.Result) {
         val rewardedAd = MaxRewardedAd.getInstance(unitId, activity)
         val adKey = UUID.randomUUID().toString()
         rewardedAd.setListener(object : SimpleMaxAdListener() {
@@ -210,7 +195,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             override fun onAdClicked(ad: MaxAd?) {
                 super.onAdClicked(ad)
                 channel.invokeMethod(
-                    "onAdClick",
+                    "max_onAdClick",
                     mapOf<String, Any?>("adKey" to adKey),
                 )
             }
@@ -218,15 +203,15 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             override fun onAdDisplayed(ad: MaxAd?) {
                 super.onAdDisplayed(ad)
                 channel.invokeMethod(
-                    "onFullscreenAdShow",
+                    "max_onFullscreenAdShow",
                     mapOf<String, Any?>("adKey" to adKey),
                 )
             }
-            
+
             override fun onAdHidden(ad: MaxAd?) {
                 super.onAdHidden(ad)
                 channel.invokeMethod(
-                    "onFullscreenAdDismiss",
+                    "max_onFullscreenAdDismiss",
                     mapOf<String, Any?>("adKey" to adKey),
                 )
             }
@@ -234,7 +219,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             override fun onUserRewarded(ad: MaxAd?, reward: MaxReward?) {
                 super.onUserRewarded(ad, reward)
                 channel.invokeMethod(
-                    "onRewarded",
+                    "max_onRewarded",
                     mapOf<String, Any?>("adKey" to adKey),
                 )
             }
@@ -242,7 +227,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         rewardedAd.loadAd()
     }
 
-    private fun showRewardedAd(adKey: String?, result: Result) {
+    private fun showRewardedAd(adKey: String?, result: MethodChannel.Result) {
         val rewardedAd = rewardedAdsPool[adKey]
         if (rewardedAd == null) {
             Log.w(
@@ -254,8 +239,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
         if (!rewardedAd.isReady) {
             Log.w(
-                "MaxAdFlutter",
-                "RewardedAd with adKey: $adKey not ready."
+                "MaxAdFlutter", "RewardedAd with adKey: $adKey not ready."
             )
             result.success(false)
             return
@@ -267,8 +251,8 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     /**
      *  NativeAd
      */
-    private fun loadNativeAd(unitId: String, result: Result) {
-        val adLoader = MaxNativeAdLoader(unitId, context)
+    private fun loadNativeAd(unitId: String, result: MethodChannel.Result) {
+        val adLoader = MaxNativeAdLoader(unitId, activity)
         val adKey = UUID.randomUUID().toString()
         adLoader.setNativeAdListener(object : MaxNativeAdListener() {
             override fun onNativeAdLoaded(p0: MaxNativeAdView?, p1: MaxAd?) {
@@ -296,7 +280,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             override fun onNativeAdClicked(p0: MaxAd?) {
                 super.onNativeAdClicked(p0)
                 channel.invokeMethod(
-                    "onAdClick",
+                    "max_onAdClick",
                     mapOf<String, Any?>("adKey" to adKey),
                 )
             }
@@ -307,8 +291,8 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     /**
      *  BannerAd
      */
-    private fun loadBannerAd(unitId: String, result: Result) {
-        val adView = MaxAdView(unitId, context)
+    private fun loadBannerAd(unitId: String, result: MethodChannel.Result) {
+        val adView = MaxAdView(unitId, activity)
         val adKey = UUID.randomUUID().toString()
         adView.setListener(object : MaxAdViewAdListener {
             override fun onAdLoaded(ad: MaxAd?) {
@@ -327,7 +311,7 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
             override fun onAdClicked(ad: MaxAd?) {
                 channel.invokeMethod(
-                    "onAdClick",
+                    "max_onAdClick",
                     mapOf<String, Any?>("adKey" to adKey),
                 )
             }
@@ -348,27 +332,16 @@ class MaxAdFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             override fun onAdCollapsed(ad: MaxAd?) {}
         })
         val width = ViewGroup.LayoutParams.MATCH_PARENT
-        val height = context.resources.getDimensionPixelSize(R.dimen.banner_height_50)
+        val height = (activity.resources.displayMetrics.density * 50).roundToInt()
         adView.layoutParams = ViewGroup.LayoutParams(width, height)
         adView.setBackgroundColor(Color.WHITE)
         adView.loadAd()
     }
-
-    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        activity = binding.activity
-    }
-
-    override fun onDetachedFromActivityForConfigChanges() {}
-
-    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {}
-
-    override fun onDetachedFromActivity() {}
 }
 
 fun AppLovinSdkConfiguration.toMap(): Map<String, Any?> {
     return mapOf(
         "countryCode" to this.countryCode,
-        "consentDialogState" to this.consentDialogState.ordinal,
     )
 }
 

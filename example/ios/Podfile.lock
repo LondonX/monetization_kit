@@ -122,6 +122,9 @@ PODS:
   - "GoogleUtilities/NSData+zlib (7.11.0)"
   - GoogleUtilities/Reachability (7.11.0):
     - GoogleUtilities/Logger
+  - in_app_purchase_storekit (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - MaterialComponents/AnimationTiming (124.2.0)
   - MaterialComponents/Availability (124.2.0)
   - MaterialComponents/Buttons (124.2.0):
@@ -254,9 +257,6 @@ PODS:
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
     - MDFTextAccessibility
-  - max_ad_flutter (0.0.1):
-    - AppLovinSDK
-    - Flutter
   - MDFInternationalization (3.0.0)
   - MDFTextAccessibility (2.0.1)
   - monetization_kit (0.0.1):
@@ -264,6 +264,7 @@ PODS:
     - AppLovinMediationFacebookAdapter
     - AppLovinMediationGoogleAdapter (~> 9.13.0)
     - AppLovinMediationUnityAdsAdapter
+    - AppLovinSDK
     - Flutter
     - google_mobile_ads
     - GoogleMobileAdsMediationFacebook
@@ -281,6 +282,9 @@ PODS:
   - OneKit-Pangle/Reachability (1.3.11):
     - OneKit-Pangle/Service
   - OneKit-Pangle/Service (1.3.11)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - PromisesObjC (2.2.0)
   - RangersAPM-Pangle/Above (3.0.2)
   - RangersAPM-Pangle/Core (3.0.2):
@@ -313,8 +317,9 @@ PODS:
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - google_mobile_ads (from `.symlinks/plugins/google_mobile_ads/ios`)
-  - max_ad_flutter (from `.symlinks/plugins/max_ad_flutter/ios`)
+  - in_app_purchase_storekit (from `.symlinks/plugins/in_app_purchase_storekit/ios`)
   - monetization_kit (from `.symlinks/plugins/monetization_kit/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
 
 SPEC REPOS:
   trunk:
@@ -350,10 +355,12 @@ EXTERNAL SOURCES:
     :path: Flutter
   google_mobile_ads:
     :path: ".symlinks/plugins/google_mobile_ads/ios"
-  max_ad_flutter:
-    :path: ".symlinks/plugins/max_ad_flutter/ios"
+  in_app_purchase_storekit:
+    :path: ".symlinks/plugins/in_app_purchase_storekit/ios"
   monetization_kit:
     :path: ".symlinks/plugins/monetization_kit/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/ios"
 
 SPEC CHECKSUMS:
   Ads-Global: 1f71d4efe00bf268d92786bb8a21353485a445ea
@@ -375,13 +382,14 @@ SPEC CHECKSUMS:
   GoogleMobileAdsMediationUnity: 512b2b1f3ad3d04d9d429bad6ab8e394534bd7ee
   GoogleUserMessagingPlatform: 5f8b30daf181805317b6b985bb51c1ff3beca054
   GoogleUtilities: c2bdc4cf2ce786c4d2e6b3bcfd599a25ca78f06f
+  in_app_purchase_storekit: 4fb7ee9e824b1f09107fbfbbce8c4b276366dc43
   MaterialComponents: 1a9b2d9d45b1601ae544de85089adc4c464306d4
-  max_ad_flutter: 34072145216861fd4153595c1a123a559406c7a9
   MDFInternationalization: d697c55307816222a55685c4ccb1044ffb030c12
   MDFTextAccessibility: f4bb4cc2194286651b59a215fdeaa0e05dc90ba5
-  monetization_kit: 48633d7f0bb44a873ebeb753f5f8dc84e8147d20
+  monetization_kit: 1a825a7545124298cb9589f35592c65a866f10be
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   OneKit-Pangle: 19fc175cb04d0830594808f470751d3d2ab14318
+  path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   RangersAPM-Pangle: d2cc7e3887f0febfd82a1c91de96ec831fb584d1
   RARegisterKit-Pangle: b840cfa2b841389f88959504aaf62ce2730a18d1

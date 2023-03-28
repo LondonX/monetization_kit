@@ -1,4 +1,4 @@
-package com.LondonX.max_ad_flutter
+package com.LondonX.monetization_kit.max
 
 import android.view.View
 import io.flutter.plugin.platform.PlatformView

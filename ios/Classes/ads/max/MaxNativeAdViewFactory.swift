@@ -10,9 +10,9 @@ import Flutter
 import AppLovinSDK
 
 class MaxNativeAdViewFactory : NSObject, FlutterPlatformViewFactory {
-    let pluginInstance: SwiftMaxAdFlutterPlugin
-    init(pluginInstance: SwiftMaxAdFlutterPlugin) {
-        self.pluginInstance = pluginInstance
+    let maxAdHelper: MaxAdHelper
+    init(maxAdHelper: MaxAdHelper) {
+        self.maxAdHelper = maxAdHelper
     }
     
     public func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
@@ -29,9 +29,9 @@ class MaxNativeAdViewFactory : NSObject, FlutterPlatformViewFactory {
         if(adKey == nil) {
             return SimplePlatformView()
         }
-        let view = pluginInstance.adViewsPool[adKey!]
-        let ad = pluginInstance.adsPool[adKey!]
-        let adLoader = pluginInstance.adLoadersPool[adKey!]
+        let view = maxAdHelper.adViewsPool[adKey!]
+        let ad = maxAdHelper.adsPool[adKey!]
+        let adLoader = maxAdHelper.adLoadersPool[adKey!]
         
         let adView = view as? MAAdView
         adView?.frame = CGRect(x: 0, y: 0, width: 320, height: 50)
@@ -40,9 +40,9 @@ class MaxNativeAdViewFactory : NSObject, FlutterPlatformViewFactory {
                 return
             }
             adLoader?.destroy(ad!)
-            self.pluginInstance.adLoadersPool.removeValue(forKey: adKey!)
-            self.pluginInstance.adsPool.removeValue(forKey: adKey!)
-            self.pluginInstance.adViewsPool.removeValue(forKey: adKey!)
+            self.maxAdHelper.adLoadersPool.removeValue(forKey: adKey!)
+            self.maxAdHelper.adsPool.removeValue(forKey: adKey!)
+            self.maxAdHelper.adViewsPool.removeValue(forKey: adKey!)
         }
     }
 }

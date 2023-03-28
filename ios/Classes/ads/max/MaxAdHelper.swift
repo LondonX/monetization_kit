@@ -3,64 +3,59 @@ import UIKit
 import AppLovinSDK
 import AppTrackingTransparency
 
-public class SwiftMaxAdFlutterPlugin: NSObject, FlutterPlugin {
+public class MaxAdHelper: NSObject {
     private let channel: FlutterMethodChannel
     
-    init(channel: FlutterMethodChannel) {
+    init(channel: FlutterMethodChannel, registrar: FlutterPluginRegistrar) {
         self.channel = channel
-    }
-    
-    public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "max_ad_flutter", binaryMessenger: registrar.messenger())
-        let instance = SwiftMaxAdFlutterPlugin(channel: channel)
-        registrar.addMethodCallDelegate(instance, channel: channel)
+        super.init()
         registrar.register(
-            MaxNativeAdViewFactory(pluginInstance: instance),
+            MaxNativeAdViewFactory(maxAdHelper: self),
             withId: "max_native_ad_template"
         )
         registrar.register(
-            MaxBannerAdViewFactory(pluginInstance: instance),
+            MaxBannerAdViewFactory(maxAdHelper: self),
             withId: "max_banner"
         )
     }
     
-    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) -> Bool {
         let args = call.arguments as? Dictionary<String, Any>
         switch call.method {
-        case "initializeSdk":
+        case "max_initializeSdk":
             initSdk(result: result)
             break
-        case "loadBannerAd":
+        case "max_loadBannerAd":
             let unitId = args?["unitId"] as? String
             loadBannerAd(unitId: unitId ?? "", result: result)
             break
-        case "loadNativeAd":
+        case "max_loadNativeAd":
             let unitId = args?["unitId"] as? String
             loadNativeAd(unitId: unitId ?? "", result: result)
             break
-        case "loadInterstitialAd":
+        case "max_loadInterstitialAd":
             let unitId = args?["unitId"] as? String
             loadInterstitialAd(unitId: unitId ?? "", result: result)
             break
-        case "showInterstitialAd":
+        case "max_showInterstitialAd":
             let adKey = args?["adKey"] as? String
             showInterstitialAd(adKey: adKey ?? "", result: result)
             break
-        case "loadRewardedAd":
+        case "max_loadRewardedAd":
             let unitId = args?["unitId"] as? String
             loadRewardedAd(unitId: unitId ?? "", result: result)
             break
-        case "showRewardedAd":
+        case "max_showRewardedAd":
             let adKey = args?["adKey"] as? String
             showRewardedAd(adKey: adKey ?? "", result: result)
             break
-        case "showMediationDebugger":
+        case "max_showMediationDebugger":
             ALSdk.shared()?.showMediationDebugger()
             break
         default:
-            result(FlutterMethodNotImplemented)
-            break
+            return false
         }
+        return true
     }
     
     private func initSdk(result: @escaping FlutterResult) {
@@ -84,7 +79,7 @@ public class SwiftMaxAdFlutterPlugin: NSObject, FlutterPlugin {
         let adKey = UUID.init().uuidString
         self.bannerDelegate = BannerAdDelegate(
             onClick: {ad in
-                self.channel.invokeMethod("onAdClick", arguments: ["adKey" : adKey])
+                self.channel.invokeMethod("max_onAdClick", arguments: ["adKey" : adKey])
             },
             onLoad: {ad in
                 self.adViewsPool[adKey] = adView
@@ -111,7 +106,7 @@ public class SwiftMaxAdFlutterPlugin: NSObject, FlutterPlugin {
         let adKey = UUID.init().uuidString
         self.nativeDelegate = NativeAdDelegate(
             onClick: {ad in
-                self.channel.invokeMethod("onAdClick", arguments: ["adKey" : adKey])
+                self.channel.invokeMethod("max_onAdClick", arguments: ["adKey" : adKey])
             },
             onLoad: { nativeAdView, ad in
                 self.adLoadersPool[adKey] = adLoader
@@ -139,7 +134,7 @@ public class SwiftMaxAdFlutterPlugin: NSObject, FlutterPlugin {
         let interstitialAd = MAInterstitialAd(adUnitIdentifier: unitId)
         self.interstitialDelegate = FullscreenAdDelegte(
             onClick: {ad in
-                self.channel.invokeMethod("onAdClick", arguments: ["adKey" : adKey])
+                self.channel.invokeMethod("max_onAdClick", arguments: ["adKey" : adKey])
             },
             onLoad: {ad in
                 self.interstitialAdsPool[adKey] = interstitialAd
@@ -156,14 +151,14 @@ public class SwiftMaxAdFlutterPlugin: NSObject, FlutterPlugin {
             },
             onShow: { ad in
                 self.channel.invokeMethod(
-                    "onFullscreenAdShow",
+                    "max_onFullscreenAdShow",
                     arguments: [
                         "adKey" : adKey,
                     ])
             },
             onClose: { ad in
                 self.channel.invokeMethod(
-                    "onFullscreenAdDismiss",
+                    "max_onFullscreenAdDismiss",
                     arguments: [
                         "adKey" : adKey,
                     ])
@@ -202,7 +197,7 @@ public class SwiftMaxAdFlutterPlugin: NSObject, FlutterPlugin {
             let rewardedAd = MARewardedAd.shared(withAdUnitIdentifier: unitId)
             self.rewardedDelegate = FullscreenAdDelegte(
                 onClick: {ad in
-                    self.channel.invokeMethod("onAdClick", arguments: ["adKey" : adKey])
+                    self.channel.invokeMethod("max_onAdClick", arguments: ["adKey" : adKey])
                 },
                 onLoad: {ad in
                     self.rewardedAdsPool[adKey] = rewardedAd
@@ -219,21 +214,21 @@ public class SwiftMaxAdFlutterPlugin: NSObject, FlutterPlugin {
                 },
                 onShow: { ad in
                     self.channel.invokeMethod(
-                        "onFullscreenAdShow",
+                        "max_onFullscreenAdShow",
                         arguments: [
                             "adKey" : adKey,
                         ])
                 },
                 onClose: { ad in
                     self.channel.invokeMethod(
-                        "onFullscreenAdDismiss",
+                        "max_onFullscreenAdDismiss",
                         arguments: [
                             "adKey" : adKey,
                         ])
                 },
                 onRewarded: { ad in
                     self.channel.invokeMethod(
-                        "onRewarded",
+                        "max_onRewarded",
                         arguments: [
                             "adKey" : adKey,
                         ])

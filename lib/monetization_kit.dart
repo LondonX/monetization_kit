@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:max_ad_flutter/max_ad_flutter.dart';
+import 'package:monetization_kit/ad/max/max_ad_helper.dart';
 import 'package:monetization_kit/ad/provider/ad_provider.dart';
 import 'package:monetization_kit/ad/provider/ad_provider_admob.dart';
 import 'package:monetization_kit/ad/provider/ad_provider_max.dart';
@@ -15,6 +15,7 @@ class MonetizationKit {
   MonetizationKit._();
 
   final adProviders = <AdProvider>[];
+  final _maxAdHelper = MaxAdHelper.instance;
   IAP? _iap;
 
   T? findAdProvider<T extends AdProvider>() {
@@ -33,9 +34,17 @@ class MonetizationKit {
         verifyPurchase,
   }) async {
     // init AdProviders
-    final withAdmob =
-        adProviders.any((provider) => provider is AdProviderAdMob);
-    _methodChannel.invokeMethod("initAds", {"withAdmob": withAdmob});
+    final withAdmob = adProviders.any(
+      (provider) => provider is AdProviderAdMob,
+    );
+    final withMax = adProviders.any(
+      (provider) => provider is AdProviderMax,
+    );
+    await _methodChannel.invokeMethod("initAds", {
+      "withAdmob": withAdmob,
+      "withMax": withMax, //not used in native
+    });
+    _maxAdHelper.setChannel(_methodChannel);
     final results = await Future.wait(adProviders.map((e) => e.init()));
     if (results.any((element) => !element)) return false;
     this.adProviders.addAll(adProviders);
@@ -54,7 +63,7 @@ class MonetizationKit {
   }
 
   Future<void> startMaxMediationTest() async {
-    await MaxAdFlutter.instance.showMediationDebugger();
+    await _maxAdHelper.showMediationDebugger();
   }
 
   IAP get iap => _iap!;
