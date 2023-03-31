@@ -8,7 +8,7 @@ import 'package:monetization_kit/iap/consuming_manager.dart';
 export 'package:in_app_purchase/in_app_purchase.dart';
 
 class IAP {
-  final Future<bool> Function(
+  Future<bool> Function(
     String productId,
     String serverVerificationData,
   )? verifyPurchase;
