@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:monetization_kit/monetization_kit.dart';
 
@@ -53,6 +54,8 @@ class AdLoader {
   }
 
   Widget? _widgetAdCache;
+  final _widgetAdLoadings = <Completer<Widget?>>[];
+  bool _isWidgetAdLoading = false;
 
   ///
   /// load Widget ads (Native/Banner)
@@ -62,7 +65,13 @@ class AdLoader {
       _log("loadWidgetAd cachedAt: $_adCachedAt");
       return _widgetAdCache!;
     }
-    _log("loadWidgetAd no cache");
+    if (_isWidgetAdLoading) {
+      final completer = Completer<Widget?>();
+      _widgetAdLoadings.add(completer);
+      _log("loadWidgetAd current is loading, add into queue");
+      return await completer.future;
+    }
+    _isWidgetAdLoading = true;
     final unitId = _nextUnitId();
     final AdProvider provider = MonetizationKit.instance.adProviders.firstWhere(
       (provider) => provider.shouldAccept(unitId),
@@ -109,17 +118,27 @@ class AdLoader {
     _adCachedAt = DateTime.now();
     log?.call(provider, AdAction.request, adType, unitId);
     _widgetAdCache = await adLoading;
+    _log(
+      "loadWidgetAd load ${_widgetAdCache == null ? "failed" : "success"}",
+    );
     if (_widgetAdCache == null) {
       log?.call(provider, AdAction.loadFailed, adType, unitId);
     } else {
       log?.call(provider, AdAction.loaded, adType, unitId);
     }
+    for (final completer in _widgetAdLoadings) {
+      completer.complete(_widgetAdCache);
+    }
+    _widgetAdLoadings.clear();
+    _isWidgetAdLoading = false;
     return _widgetAdCache;
   }
 
   Object? _fullscreenAdCache;
   AdProvider? _fullscreenCachedAdProvider;
   AdType? _fullscreenCachedType;
+  final _fullscreenLoadings = <Completer<Object?>>[];
+  bool _isLoadingFullscreenAd = false;
 
   ///
   /// load Fullscreen ads (Interstitial/Rewarded)
@@ -129,6 +148,13 @@ class AdLoader {
       _log("loadFullscreenAd cachedAt: $_adCachedAt");
       return _fullscreenAdCache;
     }
+    if (_isLoadingFullscreenAd) {
+      final completer = Completer<Object?>();
+      _fullscreenLoadings.add(completer);
+      _log("loadFullscreenAd current is loading, add into queue");
+      return await completer.future;
+    }
+    _isLoadingFullscreenAd = true;
     final unitId = _nextUnitId();
     final AdProvider provider = MonetizationKit.instance.adProviders.firstWhere(
       (provider) => provider.shouldAccept(unitId),
@@ -181,6 +207,9 @@ class AdLoader {
     _adCachedAt = DateTime.now();
     log?.call(provider, AdAction.request, adType, unitId);
     _fullscreenAdCache = await adLoading;
+    _log(
+      "loadFullscreenAd load ${_fullscreenAdCache == null ? "failed" : "success"}",
+    );
     if (_fullscreenAdCache == null) {
       log?.call(provider, AdAction.loadFailed, adType, unitId);
     } else {
@@ -188,6 +217,11 @@ class AdLoader {
       _fullscreenCachedAdProvider = provider;
       log?.call(provider, AdAction.loaded, adType, unitId);
     }
+    for (final completer in _fullscreenLoadings) {
+      completer.complete(_fullscreenAdCache);
+    }
+    _fullscreenLoadings.clear();
+    _isLoadingFullscreenAd = false;
     return _fullscreenAdCache;
   }
 
