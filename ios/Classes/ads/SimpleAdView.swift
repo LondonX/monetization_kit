@@ -79,7 +79,8 @@ class SimpleAdView : GADNativeAdView{
      */
     func applyColorScheme(_ colorScheme: ColorScheme?) {
         let placeholder = (colorScheme?.onSurface.v ?? UIColor.black).withAlphaComponent(0.8)
-        
+        _headlineView.textColor = colorScheme?.onSurface.v ?? .darkText
+        _bodyView.textColor = colorScheme?.onSurface.v ?? .darkText
         _viewMediaContainer.backgroundColor = colorScheme?.surface.v ?? .systemBackground
         _viewInfoContainer.backgroundColor = (colorScheme?.surface.v ?? .systemBackground).withAlphaComponent(0.8)
         _imageView.backgroundColor = placeholder

@@ -6,13 +6,13 @@
 <application>
     <meta-data
         android:name="com.google.android.gms.ads.APPLICATION_ID"
-        android:value="ca-app-pub-xxxxxxxxxxxxxxxx~xxxxxxxxxx" />
+        android:value="ca-app-pub-0000000000000000~0000000000" />
 </application>
 ```
 ### iOS
 ```plist
 <key>GADApplicationIdentifier</key>
-<string>ca-app-pub-xxxxxxxxxxxxxxxx~xxxxxxxxxx</string>
+<string>ca-app-pub-0000000000000000~0000000000</string>
 ```
 
 ## Add AppLovin `meta-data` if you need AppLovin.
@@ -21,13 +21,13 @@
 <application>
     <meta-data
         android:name="applovin.sdk.key"
-        android:value="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxx" />
+        android:value="00000000000000000000000000000000000000000000000000000000000-00000000000000000000000000" />
 </application>
 ```
 ### iOS
 ```plist
 <key>AppLovinSdkKey</key>
-<string>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxx</string>
+<string>00000000000000000000000000000000000000000000000000000000000-00000000000000000000000000</string>
 ```
 
 ## Call init in dart
@@ -143,7 +143,7 @@ final initFinished = await MonetizationKit.instance.init();
     </dict>
     <dict>
         <key>SKAdNetworkIdentifier</key>
-        <string>p78axxw29g.skadnetwork</string>
+        <string>p78a00w29g.skadnetwork</string>
     </dict>
     <dict>
         <key>SKAdNetworkIdentifier</key>
@@ -395,7 +395,7 @@ final initFinished = await MonetizationKit.instance.init();
     </dict>
     <dict>
         <key>SKAdNetworkIdentifier</key>
-        <string>x8jxxk4ff5.skadnetwork</string>
+        <string>x8j00k4ff5.skadnetwork</string>
     </dict>
     <dict>
         <key>SKAdNetworkIdentifier</key>
