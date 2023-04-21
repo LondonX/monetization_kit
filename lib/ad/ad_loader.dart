@@ -20,6 +20,7 @@ class AdLoader {
   final Duration reloadInterval;
   final Duration expiration;
   final bool isWaterfall;
+  final double? widgetRatioOverride;
   final Function(
     AdProvider provider,
     AdAction action,
@@ -33,6 +34,7 @@ class AdLoader {
     this.reloadInterval = const Duration(seconds: 30),
     this.expiration = const Duration(minutes: 30),
     this.isWaterfall = false,
+    this.widgetRatioOverride,
     this.log,
   }) : assert(
           unitIds.isNotEmpty,
@@ -286,6 +288,7 @@ class AdLoader {
   }
 
   double get widgetRatio {
+    if (widgetRatioOverride != null) return widgetRatioOverride!;
     switch (adType) {
       case AdType.native:
         return 16 / 9;
