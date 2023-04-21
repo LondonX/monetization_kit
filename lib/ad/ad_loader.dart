@@ -9,13 +9,17 @@ import 'provider/ad_provider.dart';
 /// Ad monetization kit
 /// [unitIds] Ad unit id list, multiple IDs will be switched every load.
 /// [adType] Ad type.
-/// [reloadInterval] Cache duration.
+/// [reloadInterval] Reload interval for AuoLoadingAdContainer.
 /// [log] Log callback with multiple args.
+/// [expiration] Cache expiration for valid check.
+/// [isWaterfall] should load [unitIds] 1 by 1 on every load.
 ///
 class AdLoader {
   final List<String> unitIds;
   final AdType adType;
   final Duration reloadInterval;
+  final Duration expiration;
+  final bool isWaterfall;
   final Function(
     AdProvider provider,
     AdAction action,
@@ -27,6 +31,8 @@ class AdLoader {
     required this.unitIds,
     required this.adType,
     this.reloadInterval = const Duration(seconds: 30),
+    this.expiration = const Duration(minutes: 30),
+    this.isWaterfall = false,
     this.log,
   }) : assert(
           unitIds.isNotEmpty,
@@ -50,7 +56,7 @@ class AdLoader {
         _fullscreenCachedAdProvider != null &&
         _fullscreenCachedType != null;
     if (_widgetAdCache == null && !isFullscreenAdCached) return false;
-    return DateTime.now().difference(_adCachedAt) < reloadInterval;
+    return DateTime.now().difference(_adCachedAt) < expiration;
   }
 
   Widget? _widgetAdCache;
@@ -72,59 +78,67 @@ class AdLoader {
       return await completer.future;
     }
     _isWidgetAdLoading = true;
-    final unitId = _nextUnitId();
-    final AdProvider provider = MonetizationKit.instance.adProviders.firstWhere(
-      (provider) => provider.shouldAccept(unitId),
-    );
-    _log(
-      "loadWidgetAd provider: ${provider.name}, adType: ${adType.name}, unitId: $unitId",
-    );
-    Future<Widget?> adLoading;
-    switch (adType) {
-      case AdType.native:
-      case AdType.nativeSmall:
-        adLoading = provider.buildNativeAd(
-          unitId: unitId,
-          isLarge: adType == AdType.native,
-          firstShow: () {
-            log?.call(provider, AdAction.impress, adType, unitId);
-          },
-          onClick: () {
-            log?.call(provider, AdAction.click, adType, unitId);
-          },
-          colorScheme: colorScheme,
-        );
-        break;
-      case AdType.banner:
-      case AdType.bannerSmall:
-        adLoading = provider.buildBannerAd(
-          unitId: unitId,
-          isLarge: adType == AdType.banner,
-          firstShow: () {
-            log?.call(provider, AdAction.impress, adType, unitId);
-          },
-          onClick: () {
-            log?.call(provider, AdAction.click, adType, unitId);
-          },
-        );
-        break;
-      case AdType.interstitial:
-      case AdType.rewarded:
-      case AdType.appOpen:
-        throw FlutterError(
-          "loadWidgetAd cannot be called with adType: ${adType.name}",
-        );
-    }
-    _adCachedAt = DateTime.now();
-    log?.call(provider, AdAction.request, adType, unitId);
-    _widgetAdCache = await adLoading;
-    _log(
-      "loadWidgetAd load ${_widgetAdCache == null ? "failed" : "success"}",
-    );
-    if (_widgetAdCache == null) {
-      log?.call(provider, AdAction.loadFailed, adType, unitId);
-    } else {
-      log?.call(provider, AdAction.loaded, adType, unitId);
+    if (isWaterfall) _unitIndex = 0;
+    while (!adCacheValid) {
+      final unitId = _nextUnitId();
+      final AdProvider provider =
+          MonetizationKit.instance.adProviders.firstWhere(
+        (provider) => provider.shouldAccept(unitId),
+      );
+      _log(
+        "loadWidgetAd provider: ${provider.name}, adType: ${adType.name}, unitId: $unitId",
+      );
+      Future<Widget?> adLoading;
+      switch (adType) {
+        case AdType.native:
+        case AdType.nativeSmall:
+          adLoading = provider.buildNativeAd(
+            unitId: unitId,
+            isLarge: adType == AdType.native,
+            firstShow: () {
+              log?.call(provider, AdAction.impress, adType, unitId);
+              _consumeWidgetAd();
+            },
+            onClick: () {
+              log?.call(provider, AdAction.click, adType, unitId);
+            },
+            colorScheme: colorScheme,
+          );
+          break;
+        case AdType.banner:
+        case AdType.bannerSmall:
+          adLoading = provider.buildBannerAd(
+            unitId: unitId,
+            isLarge: adType == AdType.banner,
+            firstShow: () {
+              log?.call(provider, AdAction.impress, adType, unitId);
+              _consumeWidgetAd();
+            },
+            onClick: () {
+              log?.call(provider, AdAction.click, adType, unitId);
+            },
+          );
+          break;
+        case AdType.interstitial:
+        case AdType.rewarded:
+        case AdType.appOpen:
+          throw FlutterError(
+            "loadWidgetAd cannot be called with adType: ${adType.name}",
+          );
+      }
+      _adCachedAt = DateTime.now();
+      log?.call(provider, AdAction.request, adType, unitId);
+      _widgetAdCache = await adLoading;
+      _log(
+        "loadWidgetAd load ${_widgetAdCache == null ? "failed" : "success"}",
+      );
+      if (_widgetAdCache == null) {
+        log?.call(provider, AdAction.loadFailed, adType, unitId);
+      } else {
+        log?.call(provider, AdAction.loaded, adType, unitId);
+      }
+      // no next unit
+      if (unitIds.indexOf(unitId) == unitIds.length - 1) break;
     }
     for (final completer in _widgetAdLoadings) {
       completer.complete(_widgetAdCache);
@@ -155,67 +169,73 @@ class AdLoader {
       return await completer.future;
     }
     _isLoadingFullscreenAd = true;
-    final unitId = _nextUnitId();
-    final AdProvider provider = MonetizationKit.instance.adProviders.firstWhere(
-      (provider) => provider.shouldAccept(unitId),
-    );
-    _log(
-      "loadFullscreenAd provider: ${provider.name}, adType: ${adType.name}, unitId: $unitId",
-    );
-    final Future<Object?> adLoading;
-    switch (adType) {
-      case AdType.interstitial:
-        adLoading = provider.loadInterstitialAd(
-          unitId: unitId,
-          onClick: () {
-            log?.call(provider, AdAction.click, adType, unitId);
-          },
-          onShow: () {
-            _consumeFullscreenAd();
-            log?.call(provider, AdAction.impress, adType, unitId);
-          },
-          onDismiss: () {
-            log?.call(provider, AdAction.close, adType, unitId);
-          },
-        );
-        break;
-      case AdType.rewarded:
-        adLoading = provider.loadRewardedAd(
-          unitId: unitId,
-          onClick: () {
-            log?.call(provider, AdAction.click, adType, unitId);
-          },
-          onShow: () {
-            _consumeFullscreenAd();
-            log?.call(provider, AdAction.impress, adType, unitId);
-          },
-          onDismiss: () {
-            log?.call(provider, AdAction.close, adType, unitId);
-          },
-        );
-        break;
-      //default:
-      case AdType.native:
-      case AdType.nativeSmall:
-      case AdType.banner:
-      case AdType.bannerSmall:
-      case AdType.appOpen:
-        throw FlutterError(
-          "loadFullscreenAd cannot be called with adType: ${adType.name}",
-        );
-    }
-    _adCachedAt = DateTime.now();
-    log?.call(provider, AdAction.request, adType, unitId);
-    _fullscreenAdCache = await adLoading;
-    _log(
-      "loadFullscreenAd load ${_fullscreenAdCache == null ? "failed" : "success"}",
-    );
-    if (_fullscreenAdCache == null) {
-      log?.call(provider, AdAction.loadFailed, adType, unitId);
-    } else {
-      _fullscreenCachedType = adType;
-      _fullscreenCachedAdProvider = provider;
-      log?.call(provider, AdAction.loaded, adType, unitId);
+    if (isWaterfall) _unitIndex = 0;
+    while (!adCacheValid) {
+      final unitId = _nextUnitId();
+      final AdProvider provider =
+          MonetizationKit.instance.adProviders.firstWhere(
+        (provider) => provider.shouldAccept(unitId),
+      );
+      _log(
+        "loadFullscreenAd provider: ${provider.name}, adType: ${adType.name}, unitId: $unitId",
+      );
+      final Future<Object?> adLoading;
+      switch (adType) {
+        case AdType.interstitial:
+          adLoading = provider.loadInterstitialAd(
+            unitId: unitId,
+            onClick: () {
+              log?.call(provider, AdAction.click, adType, unitId);
+            },
+            onShow: () {
+              _consumeFullscreenAd();
+              log?.call(provider, AdAction.impress, adType, unitId);
+            },
+            onDismiss: () {
+              log?.call(provider, AdAction.close, adType, unitId);
+            },
+          );
+          break;
+        case AdType.rewarded:
+          adLoading = provider.loadRewardedAd(
+            unitId: unitId,
+            onClick: () {
+              log?.call(provider, AdAction.click, adType, unitId);
+            },
+            onShow: () {
+              _consumeFullscreenAd();
+              log?.call(provider, AdAction.impress, adType, unitId);
+            },
+            onDismiss: () {
+              log?.call(provider, AdAction.close, adType, unitId);
+            },
+          );
+          break;
+        //default:
+        case AdType.native:
+        case AdType.nativeSmall:
+        case AdType.banner:
+        case AdType.bannerSmall:
+        case AdType.appOpen:
+          throw FlutterError(
+            "loadFullscreenAd cannot be called with adType: ${adType.name}",
+          );
+      }
+      _adCachedAt = DateTime.now();
+      log?.call(provider, AdAction.request, adType, unitId);
+      _fullscreenAdCache = await adLoading;
+      _log(
+        "loadFullscreenAd load ${_fullscreenAdCache == null ? "failed" : "success"}",
+      );
+      if (_fullscreenAdCache == null) {
+        log?.call(provider, AdAction.loadFailed, adType, unitId);
+      } else {
+        _fullscreenCachedType = adType;
+        _fullscreenCachedAdProvider = provider;
+        log?.call(provider, AdAction.loaded, adType, unitId);
+      }
+      // no next unit
+      if (_unitIndex == unitIds.length - 1) break;
     }
     for (final completer in _fullscreenLoadings) {
       completer.complete(_fullscreenAdCache);
@@ -259,6 +279,10 @@ class AdLoader {
     _fullscreenAdCache = null;
     _fullscreenCachedType = null;
     _fullscreenCachedAdProvider = null;
+  }
+
+  void _consumeWidgetAd() {
+    _widgetAdCache = null;
   }
 
   double get widgetRatio {
