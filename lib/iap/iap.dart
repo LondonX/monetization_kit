@@ -63,12 +63,36 @@ class IAP {
         final consuming =
             Consuming(productId: productId, serverVerificationData: token);
         if (verified) {
-          ConsumingManager.instance.add(consuming);
+          ConsumingManager.instance.apply(
+            (consumingList) {
+              if (!consumingList.contains(consuming)) {
+                consumingList.add(consuming);
+              }
+            },
+          );
         } else {
-          ConsumingManager.instance.remove(consuming);
+          ConsumingManager.instance.apply(
+            (consumingList) {
+              if (consumingList.contains(consuming)) {
+                consumingList.remove(consuming);
+              }
+            },
+          );
         }
         if (verified == false) break;
       }
+      ConsumingManager.instance.apply(
+        (consumingList) {
+          for (var consuming in consumingList) {
+            // already unsubscribed
+            if (!verifyNeeded.keys.contains(consuming.productId) ||
+                !verifyNeeded.values
+                    .contains(consuming.serverVerificationData)) {
+              _stateListeners[consuming.productId]?.value = false;
+            }
+          }
+        },
+      );
       _purchasing?.complete(verified);
     });
   }
@@ -91,7 +115,7 @@ class IAP {
       for (var listener in _stateListeners.values) {
         listener.value = false;
       }
-      ConsumingManager.instance.removeAll();
+      ConsumingManager.instance.apply((consumingList) => consumingList.clear());
       _storing?.complete();
       _storing = null;
     });

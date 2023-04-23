@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -27,27 +28,22 @@ class ConsumingManager {
     return true;
   }
 
-  Future<void> add(Consuming consuming) async {
-    if (_consumingList.contains(consuming)) return;
-    _consumingList.add(consuming);
-    final list = _consumingList.map((e) => e.toMap()).toList();
-    final json = jsonEncode(list);
-    (await _file).writeAsString(json);
+  void apply(Function(List<Consuming> consumingList) f) {
+    f.call(_consumingList);
+    _lazySave();
   }
 
-  Future<void> remove(Consuming consuming) async {
-    if (!_consumingList.contains(consuming)) return;
-    _consumingList.remove(consuming);
-    final list = _consumingList.map((e) => e.toMap()).toList();
-    final json = jsonEncode(list);
-    (await _file).writeAsString(json);
-  }
-
-  Future<void> removeAll() async {
-    _consumingList.clear();
-    final list = _consumingList.map((e) => e.toMap()).toList();
-    final json = jsonEncode(list);
-    (await _file).writeAsString(json);
+  Timer? _saving;
+  _lazySave() {
+    _saving?.cancel();
+    _saving = Timer(
+      const Duration(milliseconds: 100),
+      () async {
+        final list = _consumingList.map((e) => e.toMap()).toList();
+        final json = jsonEncode(list);
+        (await _file).writeAsString(json);
+      },
+    );
   }
 
   List<Consuming> get list => _consumingList;
