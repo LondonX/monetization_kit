@@ -87,4 +87,22 @@ abstract class AdProvider {
   /// return true if finish and got reward
   ///
   Future<bool> showRewardedAdIfLoaded(Object rewardedAd);
+
+  ///
+  /// load AppOpen ad
+  /// call [showAppOpenAdIfLoaded] to show
+  /// return loaded ad
+  ///
+  Future<Object?> loadAppOpenAd({
+    required String unitId,
+    required Function() onClick,
+    required Function() onShow,
+    required Function() onDismiss,
+  });
+
+  ///
+  /// show AppOpen ad
+  /// return true if finish and got reward
+  ///
+  void showAppOpenAdIfLoaded(Object appOpenAd);
 }

@@ -10,6 +10,7 @@ import com.applovin.mediation.MaxAdViewAdListener
 import com.applovin.mediation.MaxError
 import com.applovin.mediation.MaxReward
 import com.applovin.mediation.ads.MaxAdView
+import com.applovin.mediation.ads.MaxAppOpenAd
 import com.applovin.mediation.ads.MaxInterstitialAd
 import com.applovin.mediation.ads.MaxRewardedAd
 import com.applovin.mediation.nativeAds.MaxNativeAdListener
@@ -30,6 +31,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
     val adViewsPool = hashMapOf<String, View?>()
     val interstitialAdsPool = hashMapOf<String, MaxInterstitialAd>()
     val rewardedAdsPool = hashMapOf<String, MaxRewardedAd>()
+    val appOpenAdsPool = hashMapOf<String, MaxAppOpenAd>()
 
     init {
         registry.registerViewFactory(
@@ -77,6 +79,14 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
             "max_showRewardedAd" -> {
                 val adKey = call.argument<String>("adKey")
                 showRewardedAd(adKey, result)
+            }
+            "max_loadAppOpenAd" -> {
+                val unitId = call.argument<String>("unitId")
+                loadAppOpenAd(unitId!!, result)
+            }
+            "max_showAppOpenAd" -> {
+                val adKey = call.argument<String>("adKey")
+                showAppOpenAd(adKey, result)
             }
             "max_showMediationDebugger" -> {
                 AppLovinSdk.getInstance(activity).showMediationDebugger()
@@ -245,6 +255,82 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
             return
         }
         rewardedAd.showAd()
+        result.success(true)
+    }
+
+    /**
+     *  AppOpenAd
+     */
+    private fun loadAppOpenAd(unitId: String, result: MethodChannel.Result) {
+        val appOpenAd = MaxAppOpenAd(unitId, activity)
+        val adKey = UUID.randomUUID().toString()
+        appOpenAd.setListener(object : SimpleMaxAdListener() {
+            override fun onAdLoaded(ad: MaxAd?) {
+                super.onAdLoaded(ad)
+                appOpenAdsPool[adKey] = appOpenAd
+                result.success(
+                    mapOf<String, Any?>(
+                        "adKey" to adKey,
+                        "error" to null,
+                    )
+                )
+            }
+
+            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+                super.onAdLoadFailed(adUnitId, error)
+                result.success(
+                    mapOf<String, Any?>(
+                        "adKey" to null,
+                        "error" to error?.toMap(),
+                    )
+                )
+            }
+
+            override fun onAdClicked(ad: MaxAd?) {
+                super.onAdClicked(ad)
+                channel.invokeMethod(
+                    "max_onAdClick",
+                    mapOf<String, Any?>("adKey" to adKey),
+                )
+            }
+
+            override fun onAdDisplayed(ad: MaxAd?) {
+                super.onAdDisplayed(ad)
+                channel.invokeMethod(
+                    "max_onFullscreenAdShow",
+                    mapOf<String, Any?>("adKey" to adKey),
+                )
+            }
+
+            override fun onAdHidden(ad: MaxAd?) {
+                super.onAdHidden(ad)
+                channel.invokeMethod(
+                    "max_onFullscreenAdDismiss",
+                    mapOf<String, Any?>("adKey" to adKey),
+                )
+            }
+        })
+        appOpenAd.loadAd()
+    }
+
+    private fun showAppOpenAd(adKey: String?, result: MethodChannel.Result) {
+        val appOpenAd = appOpenAdsPool[adKey]
+        if (appOpenAd == null) {
+            Log.w(
+                "MaxAdFlutter",
+                "AppOpenAd with adKey: $adKey not found. You should call plugin's loadAppOpenAd method to get an adKey."
+            )
+            result.success(false)
+            return
+        }
+        if (!appOpenAd.isReady) {
+            Log.w(
+                "MaxAdFlutter", "AppOpenAd with adKey: $adKey not ready."
+            )
+            result.success(false)
+            return
+        }
+        appOpenAd.showAd()
         result.success(true)
     }
 

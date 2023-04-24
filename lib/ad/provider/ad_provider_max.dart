@@ -154,4 +154,42 @@ class AdProviderMax extends AdProvider {
     );
     return await completer.future;
   }
+
+  @override
+  Future<Object?> loadAppOpenAd({
+    required String unitId,
+    required Function() onClick,
+    required Function() onShow,
+    required Function() onDismiss,
+  }) async {
+    debugLog("loadAppOpenAd unitId: $unitId");
+    final loadResult = await _maxAd.loadAppOpenAd(
+      unitId,
+      onClick: onClick,
+      onShow: onShow,
+      onDismiss: onDismiss,
+    );
+    if (loadResult.error != null) {
+      debugLog(
+        "AppOpen load failed. unitId: $unitId, error: ${loadResult.errorJson()}",
+      );
+      return null;
+    }
+    debugLog(
+      "AppOpen loaded. unitId: $unitId",
+    );
+    return loadResult.adKey;
+  }
+
+  @override
+  void showAppOpenAdIfLoaded(dynamic appOpenAd) async {
+    if (appOpenAd == null) return;
+    if (appOpenAd is! String) return;
+    _maxAd.showAppOpenAd(
+      appOpenAd,
+      onAppOpen: (isAppOpen) {
+        debugLog("AppOpen finish, isAppOpen: $isAppOpen");
+      },
+    );
+  }
 }

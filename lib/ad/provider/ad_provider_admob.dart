@@ -231,4 +231,55 @@ class AdProviderAdMob extends AdProvider {
     );
     return await completer.future;
   }
+
+  @override
+  Future<Object?> loadAppOpenAd({
+    required String unitId,
+    required Function() onClick,
+    required Function() onShow,
+    required Function() onDismiss,
+  }) async {
+    final completer = Completer<AppOpenAd?>();
+    final startAt = DateTime.now();
+    int getTimeConsume() => DateTime.now().difference(startAt).inSeconds;
+    debugLog("loadAppOpenAd");
+    AppOpenAd.load(
+      adUnitId: unitId,
+      request: _adRequest,
+      adLoadCallback: AppOpenAdLoadCallback(
+        onAdLoaded: (ad) {
+          debugLog(
+            "appOpenAd loaded. unitId: $unitId, time consume: ${getTimeConsume()}s",
+          );
+          completer.complete(ad);
+        },
+        onAdFailedToLoad: (error) {
+          debugLog(
+            "appOpenAd load failed. unitId: $unitId, error: $error, time consume: ${getTimeConsume()}s",
+          );
+          completer.complete(null);
+        },
+      ),
+      orientation: AppOpenAd.orientationPortrait,
+    );
+    final ad = await completer.future;
+    ad?.fullScreenContentCallback = FullScreenContentCallback(
+      onAdClicked: (ad) {
+        onClick();
+      },
+      onAdShowedFullScreenContent: (ad) {
+        onShow();
+      },
+      onAdDismissedFullScreenContent: (ad) {
+        onDismiss();
+      },
+    );
+    return ad;
+  }
+
+  @override
+  void showAppOpenAdIfLoaded(Object appOpenAd) {
+    if (appOpenAd is! AppOpenAd) return;
+    appOpenAd.show();
+  }
 }

@@ -49,6 +49,14 @@ public class MaxAdHelper: NSObject {
             let adKey = args?["adKey"] as? String
             showRewardedAd(adKey: adKey ?? "", result: result)
             break
+        case "max_loadAppOpenAd":
+            let unitId = args?["unitId"] as? String
+            loadAppOpenAd(unitId: unitId ?? "", result: result)
+            break
+        case "max_showAppOpenAd":
+            let adKey = args?["adKey"] as? String
+            showAppOpenAd(adKey: adKey ?? "", result: result)
+            break
         case "max_showMediationDebugger":
             ALSdk.shared()?.showMediationDebugger()
             break
@@ -69,6 +77,7 @@ public class MaxAdHelper: NSObject {
     public var adsPool: [String : MAAd] = [:]
     public var adViewsPool: [String : UIView?] = [:]
     public var interstitialAdsPool: [String : MAInterstitialAd] = [:]
+    public var appOpenAdsPool: [String : MAAppOpenAd] = [:]
     public var rewardedAdsPool: [String : MARewardedAd] = [:]
     
     //MARK: - Banner Ad
@@ -128,11 +137,11 @@ public class MaxAdHelper: NSObject {
         adLoader.loadAd()
     }
     //MARK: - Interstitial Ad
-    private var interstitialDelegate: FullscreenAdDelegte? = nil
+    private var interstitialDelegate: FullscreenAdDelegate? = nil
     func loadInterstitialAd(unitId: String, result: @escaping FlutterResult) {
         let adKey = UUID.init().uuidString
         let interstitialAd = MAInterstitialAd(adUnitIdentifier: unitId)
-        self.interstitialDelegate = FullscreenAdDelegte(
+        self.interstitialDelegate = FullscreenAdDelegate(
             onClick: {ad in
                 self.channel.invokeMethod("max_onAdClick", arguments: ["adKey" : adKey])
             },
@@ -191,74 +200,137 @@ public class MaxAdHelper: NSObject {
     }
     
     //MARK: - Rewarded Ad
-    private var rewardedDelegate: FullscreenAdDelegte? = nil
-        func loadRewardedAd(unitId: String, result: @escaping FlutterResult) {
-            let adKey = UUID.init().uuidString
-            let rewardedAd = MARewardedAd.shared(withAdUnitIdentifier: unitId)
-            self.rewardedDelegate = FullscreenAdDelegte(
-                onClick: {ad in
-                    self.channel.invokeMethod("max_onAdClick", arguments: ["adKey" : adKey])
-                },
-                onLoad: {ad in
-                    self.rewardedAdsPool[adKey] = rewardedAd
-                    result([
+    private var rewardedDelegate: FullscreenAdDelegate? = nil
+    func loadRewardedAd(unitId: String, result: @escaping FlutterResult) {
+        let adKey = UUID.init().uuidString
+        let rewardedAd = MARewardedAd.shared(withAdUnitIdentifier: unitId)
+        self.rewardedDelegate = FullscreenAdDelegate(
+            onClick: {ad in
+                self.channel.invokeMethod("max_onAdClick", arguments: ["adKey" : adKey])
+            },
+            onLoad: {ad in
+                self.rewardedAdsPool[adKey] = rewardedAd
+                result([
+                    "adKey" : adKey,
+                    "error" : nil,
+                ])
+            },
+            onFailToLoad: {unitId, error in
+                result([
+                    "adKey" : nil,
+                    "error" : maErrorToMap(error: error),
+                ])
+            },
+            onShow: { ad in
+                self.channel.invokeMethod(
+                    "max_onFullscreenAdShow",
+                    arguments: [
                         "adKey" : adKey,
-                        "error" : nil,
                     ])
-                },
-                onFailToLoad: {unitId, error in
-                    result([
-                        "adKey" : nil,
-                        "error" : maErrorToMap(error: error),
+            },
+            onClose: { ad in
+                self.channel.invokeMethod(
+                    "max_onFullscreenAdDismiss",
+                    arguments: [
+                        "adKey" : adKey,
                     ])
-                },
-                onShow: { ad in
-                    self.channel.invokeMethod(
-                        "max_onFullscreenAdShow",
-                        arguments: [
-                            "adKey" : adKey,
-                        ])
-                },
-                onClose: { ad in
-                    self.channel.invokeMethod(
-                        "max_onFullscreenAdDismiss",
-                        arguments: [
-                            "adKey" : adKey,
-                        ])
-                },
-                onRewarded: { ad in
-                    self.channel.invokeMethod(
-                        "max_onRewarded",
-                        arguments: [
-                            "adKey" : adKey,
-                        ])
-                }
+            },
+            onRewarded: { ad in
+                self.channel.invokeMethod(
+                    "max_onRewarded",
+                    arguments: [
+                        "adKey" : adKey,
+                    ])
+            }
+        )
+        rewardedAd.delegate = self.rewardedDelegate
+        rewardedAd.load()
+    }
+    
+    func showRewardedAd(adKey: String, result: @escaping FlutterResult) {
+        let rewardedAd = rewardedAdsPool[adKey]
+        if (rewardedAd == nil) {
+            print(
+                "MaxAdFlutter",
+                "RewardedAd with adKey: $adKey not found. You should call plugin's loadRewardedAd method to get an adKey."
             )
-            rewardedAd.delegate = self.rewardedDelegate
-            rewardedAd.load()
+            result(false)
+            return
         }
-        
-        func showRewardedAd(adKey: String, result: @escaping FlutterResult) {
-            let rewardedAd = rewardedAdsPool[adKey]
-            if (rewardedAd == nil) {
-                print(
-                    "MaxAdFlutter",
-                    "RewardedAd with adKey: $adKey not found. You should call plugin's loadRewardedAd method to get an adKey."
-                )
-                result(false)
-                return
-            }
-            if (!rewardedAd!.isReady) {
-                print(
-                    "MaxAdFlutter",
-                    "RewardedAd with adKey: $adKey not ready."
-                )
-                result(false)
-                return
-            }
-            rewardedAd!.show()
-            result(true)
+        if (!rewardedAd!.isReady) {
+            print(
+                "MaxAdFlutter",
+                "RewardedAd with adKey: $adKey not ready."
+            )
+            result(false)
+            return
         }
+        rewardedAd!.show()
+        result(true)
+    }
+    
+    //MARK: - AppOpen Ad
+    private var appOpenDelegate: FullscreenAdDelegate? = nil
+    func loadAppOpenAd(unitId: String, result: @escaping FlutterResult) {
+        let adKey = UUID.init().uuidString
+        let appOpenAd = MAAppOpenAd(adUnitIdentifier: unitId)
+        self.appOpenDelegate = FullscreenAdDelegate(
+            onClick: {ad in
+                self.channel.invokeMethod("max_onAdClick", arguments: ["adKey" : adKey])
+            },
+            onLoad: {ad in
+                self.appOpenAdsPool[adKey] = appOpenAd
+                result([
+                    "adKey" : adKey,
+                    "error" : nil,
+                ])
+            },
+            onFailToLoad: {unitId, error in
+                result([
+                    "adKey" : nil,
+                    "error" : maErrorToMap(error: error),
+                ])
+            },
+            onShow: { ad in
+                self.channel.invokeMethod(
+                    "max_onFullscreenAdShow",
+                    arguments: [
+                        "adKey" : adKey,
+                    ])
+            },
+            onClose: { ad in
+                self.channel.invokeMethod(
+                    "max_onFullscreenAdDismiss",
+                    arguments: [
+                        "adKey" : adKey,
+                    ])
+            }
+        )
+        appOpenAd.delegate = self.appOpenDelegate
+        appOpenAd.load()
+    }
+    
+    func showAppOpenAd(adKey: String, result: @escaping FlutterResult) {
+        let appOpenAd = appOpenAdsPool[adKey]
+        if (appOpenAd == nil) {
+            print(
+                "MaxAdFlutter",
+                "AppOpenAd with adKey: $adKey not found. You should call plugin's loadAppOpenAd method to get an adKey."
+            )
+            result(false)
+            return
+        }
+        if (!appOpenAd!.isReady) {
+            print(
+                "MaxAdFlutter",
+                "AppOpenAd with adKey: $adKey not ready."
+            )
+            result(false)
+            return
+        }
+        appOpenAd!.show()
+        result(true)
+    }
 }
 
 func alSdkConfigToMap(config: ALSdkConfiguration) -> [String : Any] {

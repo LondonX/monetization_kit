@@ -8,7 +8,7 @@
 import Foundation
 import AppLovinSDK
 
-class FullscreenAdDelegte : NSObject, MAAdDelegate, MARewardedAdDelegate {
+class FullscreenAdDelegate : NSObject, MAAdDelegate, MARewardedAdDelegate {
     
     private var onClick: ((_ ad: MAAd)->Void)?
     private var onLoad: ((_ ad: MAAd)->Void)?

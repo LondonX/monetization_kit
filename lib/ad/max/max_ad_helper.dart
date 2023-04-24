@@ -203,7 +203,37 @@ class MaxAdHelper {
         );
   }
 
-  Future showMediationDebugger() async {
+  Future<LoadResult> loadAppOpenAd(
+    String unitId, {
+    required Function() onClick,
+    required Function() onShow,
+    required Function() onDismiss,
+  }) async {
+    final raw = await _channel.invokeMapMethod<String, dynamic>(
+      "max_loadAppOpenAd",
+      {"unitId": unitId},
+    );
+    final result = resolveLoadResult(raw);
+    if (result.adKey != null) {
+      adClickListeners[result.adKey!] = onClick;
+      fullscreenAdShowListeners[result.adKey!] = onShow;
+      fullscreenAdDismissListeners[result.adKey!] = onDismiss;
+    }
+    return result;
+  }
+
+  Future<bool> showAppOpenAd(
+    String adKey, {
+    required Function(bool) onAppOpen,
+  }) async {
+    return true ==
+        await _channel.invokeMethod<bool>(
+          "max_showAppOpenAd",
+          {"adKey": adKey},
+        );
+  }
+
+  Future<void> showMediationDebugger() async {
     await _channel.invokeMethod("max_showMediationDebugger");
   }
 }

@@ -213,12 +213,26 @@ class AdLoader {
             },
           );
           break;
+        case AdType.appOpen:
+          adLoading = provider.loadAppOpenAd(
+            unitId: unitId,
+            onClick: () {
+              log?.call(provider, AdAction.click, adType, unitId);
+            },
+            onShow: () {
+              _consumeFullscreenAd();
+              log?.call(provider, AdAction.impress, adType, unitId);
+            },
+            onDismiss: () {
+              log?.call(provider, AdAction.close, adType, unitId);
+            },
+          );
+          break;
         //default:
         case AdType.native:
         case AdType.nativeSmall:
         case AdType.banner:
         case AdType.bannerSmall:
-        case AdType.appOpen:
           throw FlutterError(
             "loadFullscreenAd cannot be called with adType: ${adType.name}",
           );
@@ -263,12 +277,17 @@ class AdLoader {
             ) ??
             false;
         break;
+      case AdType.appOpen:
+        _fullscreenCachedAdProvider?.showAppOpenAdIfLoaded(
+          _fullscreenAdCache!,
+        );
+        finished = true;
+        break;
       //default:
       case AdType.native:
       case AdType.nativeSmall:
       case AdType.banner:
       case AdType.bannerSmall:
-      case AdType.appOpen:
       case null:
         throw FlutterError(
           "showFullscreenAd cannot be called with adType: ${adType.name}",
