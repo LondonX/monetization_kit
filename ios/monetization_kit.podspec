@@ -22,11 +22,11 @@ A new Flutter plugin project.
   s.dependency 'GoogleMobileAdsMediationPangle'
   s.dependency 'GoogleMobileAdsMediationFacebook'
   s.dependency 'GoogleMobileAdsMediationUnity'
-  s.dependency 'AppLovinMediationGoogleAdapter', '~> 9.13.0'
+  s.dependency 'AppLovinMediationGoogleAdapter'
   s.dependency 'AppLovinMediationFacebookAdapter'
   s.dependency 'AppLovinMediationByteDanceAdapter'
   s.dependency 'AppLovinMediationUnityAdsAdapter'
-  s.platform = :ios, '9.0'
+  s.platform = :ios, '13.0'
   s.static_framework = true
 
   # Flutter.framework does not contain a i386 slice.
