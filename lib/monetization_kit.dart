@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:monetization_kit/ad/max/max_ad_helper.dart';
 import 'package:monetization_kit/ad/provider/ad_provider.dart';
@@ -17,6 +18,8 @@ class MonetizationKit {
   final adProviders = <AdProvider>[];
   final _maxAdHelper = MaxAdHelper.instance;
   IAP? _iap;
+
+  final adsInit = ValueNotifier(false);
 
   T? findAdProvider<T extends AdProvider>() {
     for (var provider in adProviders) {
@@ -48,6 +51,7 @@ class MonetizationKit {
     final results = await Future.wait(adProviders.map((e) => e.init()));
     if (results.any((element) => !element)) return false;
     this.adProviders.addAll(adProviders);
+    adsInit.value = true;
     // init iap
     await ConsumingManager.instance.init();
     _iap = IAP(verifyPurchase: verifyPurchase);

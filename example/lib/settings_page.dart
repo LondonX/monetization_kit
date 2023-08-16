@@ -23,6 +23,18 @@ class _SettingsPageState extends State<SettingsPage> {
           subtitle: Text(
               "${MonetizationKit.instance.adProviders.length} AdProviders."),
         ),
+        ListTile(
+          title: const Text("Admob inspector"),
+          onTap: MonetizationKit.instance.startAdmobInspector,
+        ),
+        ListTile(
+          title: const Text("Admob mediation test"),
+          onTap: MonetizationKit.instance.startAdmobMediationTest,
+        ),
+        ListTile(
+          title: const Text("Max mediation test"),
+          onTap: MonetizationKit.instance.startMaxMediationTest,
+        ),
         SwitchListTile(
           title: const Text("MonetizationKit.debug"),
           value: MonetizationKit.debug,

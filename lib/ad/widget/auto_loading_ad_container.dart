@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:monetization_kit/monetization_kit.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../ad_loader.dart';
@@ -10,6 +11,7 @@ class AutoLoadingAdContainer extends StatefulWidget {
   final Duration? reloadInterval;
   final bool initAdLoading;
   final ColorScheme? colorScheme;
+  final bool keepSizeWhenNoAds;
 
   const AutoLoadingAdContainer({
     Key? key,
@@ -17,6 +19,7 @@ class AutoLoadingAdContainer extends StatefulWidget {
     this.reloadInterval,
     this.initAdLoading = true,
     this.colorScheme,
+    this.keepSizeWhenNoAds = true,
   }) : super(key: key);
 
   @override
@@ -30,12 +33,13 @@ class _AutoLoadingAdContainerState extends State<AutoLoadingAdContainer>
   DateTime _loadedAt = DateTime.fromMillisecondsSinceEpoch(0);
   bool _appActive = true;
   late bool _visibility = widget.initAdLoading;
+  bool get _adsInit => MonetizationKit.instance.adsInit.value;
 
   Duration get _reloadInterval =>
       widget.reloadInterval ?? widget.adLoader.reloadInterval;
 
   Future<void> _loadAdIfNeeded([Timer? _]) async {
-    if (!_appActive || !_visibility) return;
+    if (!_appActive || !_visibility || !_adsInit) return;
     // 小于间隔时间
     if (DateTime.now().difference(_loadedAt) < _reloadInterval) return;
     _loadedAt = DateTime.now();
@@ -64,17 +68,26 @@ class _AutoLoadingAdContainerState extends State<AutoLoadingAdContainer>
     _widgetAdLoading = null;
   }
 
+  _adsInitChange() {
+    if (_adsInit) _loadAdIfNeeded();
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    MonetizationKit.instance.adsInit.addListener(_adsInitChange);
     super.initState();
     _startAutoLoading();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      // setState(() {}); // update width
+    });
   }
 
   @override
   void dispose() {
     _stopLoading();
     WidgetsBinding.instance.removeObserver(this);
+    MonetizationKit.instance.adsInit.removeListener(_adsInitChange);
     super.dispose();
   }
 
@@ -88,18 +101,17 @@ class _AutoLoadingAdContainerState extends State<AutoLoadingAdContainer>
   Widget build(BuildContext context) {
     final ratio = widget.adLoader.widgetRatio;
     if (ratio == 0) return const SizedBox();
-    final width = MediaQuery.of(context).size.width;
-    final height = width / ratio;
     return VisibilityDetector(
       key: _key,
       onVisibilityChanged: (info) {
         _visibility = info.visibleFraction > 0.5;
       },
-      child: SizedBox(
-        width: width,
-        height: height,
-        child: _ad,
-      ),
+      child: _ad != null || widget.keepSizeWhenNoAds
+          ? AspectRatio(
+              aspectRatio: ratio,
+              child: _ad,
+            )
+          : const SizedBox(height: 0.01),
     );
   }
 }

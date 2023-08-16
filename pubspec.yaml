@@ -1,12 +1,11 @@
 name: monetization_kit
 description: A new Flutter plugin project.
-version: 0.0.3+3
+version: 1.0.0+1000
 homepage: "https://github.com/LondonX/monetization_kit"
 publish_to: none
 
 environment:
-  sdk: ">=2.19.4 <3.0.0"
-  flutter: ">=2.5.0"
+  sdk: ">=2.19.4 <4.0.0"
 
 dependencies:
   flutter:
@@ -17,7 +16,7 @@ dependencies:
 
   visibility_detector:
   google_mobile_ads: ^3.0.0
-  in_app_purchase: ^3.1.5
+  in_app_purchase: ^3.1.8
 
 dev_dependencies:
   flutter_test:
