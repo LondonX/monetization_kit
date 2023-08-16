@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -63,7 +64,12 @@ class MonetizationKit {
   }
 
   Future<void> startAdmobInspector() async {
-    MobileAds.instance.openAdInspector((p0) {});
+    MobileAds.instance.openAdInspector((error) {
+      if (!kReleaseMode && error != null) {
+        // ignore: avoid_print
+        print(error.message);
+      }
+    });
   }
 
   Future<void> startMaxMediationTest() async {

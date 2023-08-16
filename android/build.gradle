@@ -69,4 +69,6 @@ dependencies {
     implementation 'com.applovin.mediation:facebook-adapter:+'
     implementation 'com.applovin.mediation:bytedance-adapter:+'
     implementation 'com.applovin.mediation:unityads-adapter:+'
+    // Extra dependencies for Pangle 
+    implementation 'com.pangle.global:adapter-for-admob:+'
 }

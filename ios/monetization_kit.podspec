@@ -26,6 +26,7 @@ A new Flutter plugin project.
   s.dependency 'AppLovinMediationFacebookAdapter'
   s.dependency 'AppLovinMediationByteDanceAdapter'
   s.dependency 'AppLovinMediationUnityAdsAdapter'
+  s.dependency 'Pangle-adapter-for-admob'
   s.platform = :ios, '13.0'
   s.static_framework = true
 
