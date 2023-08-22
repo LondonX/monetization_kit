@@ -1,13 +1,4 @@
 PODS:
-  - Ads-Global/BUAdSDK_Compatible (5.1.1.0):
-    - Ads-Global/BURelyAdSDK
-    - Ads-Global/Dep_Compatible
-  - Ads-Global/BURelyAdSDK (5.1.1.0)
-  - Ads-Global/Dep_Compatible (5.1.1.0):
-    - BURelyFoundation_Global/Pangle (~> 0.1.0.15)
-  - AppLovinMediationByteDanceAdapter (5.1.1.0.0):
-    - Ads-Global/BUAdSDK_Compatible (= 5.1.1.0)
-    - AppLovinSDK
   - AppLovinMediationFacebookAdapter (6.12.0.2):
     - AppLovinSDK
     - FBAudienceNetwork (= 6.12.0)
@@ -18,32 +9,6 @@ PODS:
     - AppLovinSDK
     - UnityAds (= 4.7.0)
   - AppLovinSDK (11.9.0)
-  - BURelyFoundation_Global/AFNetworking (0.1.0.15)
-  - BURelyFoundation_Global/Foundation (0.1.0.15):
-    - BURelyFoundation_Global/NETWork
-  - BURelyFoundation_Global/Gecko (0.1.0.15):
-    - BURelyFoundation_Global/Foundation
-  - BURelyFoundation_Global/Header (0.1.0.15)
-  - BURelyFoundation_Global/NETWork (0.1.0.15):
-    - BURelyFoundation_Global/AFNetworking
-  - BURelyFoundation_Global/Pangle (0.1.0.15):
-    - BURelyFoundation_Global/AFNetworking
-    - BURelyFoundation_Global/Foundation
-    - BURelyFoundation_Global/Gecko
-    - BURelyFoundation_Global/Header
-    - BURelyFoundation_Global/NETWork
-    - BURelyFoundation_Global/SDWebImage
-    - BURelyFoundation_Global/YYModel
-    - BURelyFoundation_Global/ZFPlayer
-    - BURelyFoundation_Global/Zip
-  - BURelyFoundation_Global/SDWebImage (0.1.0.15):
-    - BURelyFoundation_Global/Foundation
-  - BURelyFoundation_Global/YYModel (0.1.0.15)
-  - BURelyFoundation_Global/ZFPlayer (0.1.0.15):
-    - BURelyFoundation_Global/Foundation
-    - BURelyFoundation_Global/Zip
-  - BURelyFoundation_Global/Zip (0.1.0.15):
-    - BURelyFoundation_Global/Foundation
   - FBAudienceNetwork (6.12.0)
   - Flutter (1.0.0)
   - Google-Mobile-Ads-SDK (10.4.0):
@@ -76,9 +41,6 @@ PODS:
   - GoogleMobileAdsMediationFacebook (6.12.0.1):
     - FBAudienceNetwork (= 6.12.0)
     - Google-Mobile-Ads-SDK (~> 10.0)
-  - GoogleMobileAdsMediationPangle (5.1.1.0.0):
-    - Ads-Global/BUAdSDK_Compatible (= 5.1.1.0)
-    - Google-Mobile-Ads-SDK (~> 10.4)
   - GoogleMobileAdsMediationTestSuite (3.0.0):
     - Google-Mobile-Ads-SDK (>= 9.0.0)
     - MaterialComponents/Cards (~> 124.0)
@@ -244,7 +206,6 @@ PODS:
   - MDFInternationalization (3.0.0)
   - MDFTextAccessibility (2.0.1)
   - monetization_kit (0.0.1):
-    - AppLovinMediationByteDanceAdapter
     - AppLovinMediationFacebookAdapter
     - AppLovinMediationGoogleAdapter
     - AppLovinMediationUnityAdsAdapter
@@ -252,7 +213,6 @@ PODS:
     - Flutter
     - google_mobile_ads
     - GoogleMobileAdsMediationFacebook
-    - GoogleMobileAdsMediationPangle
     - GoogleMobileAdsMediationTestSuite
     - GoogleMobileAdsMediationUnity
   - nanopb (2.30909.0):
@@ -278,18 +238,14 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Ads-Global
-    - AppLovinMediationByteDanceAdapter
     - AppLovinMediationFacebookAdapter
     - AppLovinMediationGoogleAdapter
     - AppLovinMediationUnityAdsAdapter
     - AppLovinSDK
-    - BURelyFoundation_Global
     - FBAudienceNetwork
     - Google-Mobile-Ads-SDK
     - GoogleAppMeasurement
     - GoogleMobileAdsMediationFacebook
-    - GoogleMobileAdsMediationPangle
     - GoogleMobileAdsMediationTestSuite
     - GoogleMobileAdsMediationUnity
     - GoogleUserMessagingPlatform
@@ -316,20 +272,16 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
-  Ads-Global: 00b9ea5ee85583d3049e6213ffab34250df0943a
-  AppLovinMediationByteDanceAdapter: a746e4c01dc4c79f08740f62f54fa953ff9cb38c
   AppLovinMediationFacebookAdapter: 40a6166c59a9946ab18db01aa7ab42c4de209d90
   AppLovinMediationGoogleAdapter: e48a21fbb780ce442d814961c252920a8255e11c
   AppLovinMediationUnityAdsAdapter: 74bcb58ddabd8dd249c834247e937a7965b0996d
   AppLovinSDK: 2022f21e5b713b2c04bb7c2f10bde0f2dea89f11
-  BURelyFoundation_Global: 342d21d91404b94cf53038246ed07ead53f6bb2a
   FBAudienceNetwork: e0fcc9091fced34910ed0b6da06f129db46ac9e6
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   Google-Mobile-Ads-SDK: 32fe7836431a06a29f7734ae092b600137c8108d
   google_mobile_ads: 53b1f0d74445963e5810e34ac38dfb27aabe278e
   GoogleAppMeasurement: 373bcbead1bb6a85be7a64d5d8f96284b762ea9c
   GoogleMobileAdsMediationFacebook: d0dfe773d6009ddd2ee0dfded681a7a2c56a315b
-  GoogleMobileAdsMediationPangle: 7e8fd92ed7f6a2316c028d40cc4cd1aaf5a844c3
   GoogleMobileAdsMediationTestSuite: 072c67cb9b10b6f7847b0733baadf7c77e2d737f
   GoogleMobileAdsMediationUnity: d26c96e270119806186a25f51c6fb8d7d7c8cf08
   GoogleUserMessagingPlatform: 5f8b30daf181805317b6b985bb51c1ff3beca054
@@ -338,7 +290,7 @@ SPEC CHECKSUMS:
   MaterialComponents: 1a9b2d9d45b1601ae544de85089adc4c464306d4
   MDFInternationalization: d697c55307816222a55685c4ccb1044ffb030c12
   MDFTextAccessibility: f4bb4cc2194286651b59a215fdeaa0e05dc90ba5
-  monetization_kit: 2f9a78c8fb7f66f6badbf37dddefc90a5d35acdd
+  monetization_kit: d46a905fe7080f20d137139b12b07c90b0dbc3ce
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef

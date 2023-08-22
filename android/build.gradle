@@ -25,7 +25,7 @@ rootProject.allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://artifact.bytedance.com/repository/pangle/' }
+        // maven { url 'https://artifact.bytedance.com/repository/pangle/' }
     }
 }
 
@@ -59,7 +59,6 @@ dependencies {
 
     // Admob mediations
     implementation 'com.google.android.ads:mediation-test-suite:+'
-    implementation 'com.google.ads.mediation:pangle:+'
     implementation 'com.google.ads.mediation:facebook:+'
     implementation 'com.unity3d.ads:unity-ads:+'
     implementation 'com.google.ads.mediation:unity:+'
@@ -67,8 +66,5 @@ dependencies {
     implementation 'com.applovin:applovin-sdk:+'
     implementation 'com.applovin.mediation:google-ad-manager-adapter:+'
     implementation 'com.applovin.mediation:facebook-adapter:+'
-    implementation 'com.applovin.mediation:bytedance-adapter:+'
     implementation 'com.applovin.mediation:unityads-adapter:+'
-    // Extra dependencies for Pangle 
-    implementation 'com.pangle.global:adapter-for-admob:+'
 }

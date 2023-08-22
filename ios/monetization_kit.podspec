@@ -19,14 +19,11 @@ A new Flutter plugin project.
   s.dependency 'google_mobile_ads'
   s.dependency 'AppLovinSDK'
   s.dependency 'GoogleMobileAdsMediationTestSuite'
-  s.dependency 'GoogleMobileAdsMediationPangle'
   s.dependency 'GoogleMobileAdsMediationFacebook'
   s.dependency 'GoogleMobileAdsMediationUnity'
   s.dependency 'AppLovinMediationGoogleAdapter'
   s.dependency 'AppLovinMediationFacebookAdapter'
-  s.dependency 'AppLovinMediationByteDanceAdapter'
   s.dependency 'AppLovinMediationUnityAdsAdapter'
-  s.dependency 'Pangle-adapter-for-admob'
   s.platform = :ios, '13.0'
   s.static_framework = true
 
