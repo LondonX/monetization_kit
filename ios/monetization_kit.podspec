@@ -21,9 +21,7 @@ A new Flutter plugin project.
   s.dependency 'GoogleMobileAdsMediationTestSuite'
   s.dependency 'GoogleMobileAdsMediationFacebook'
   s.dependency 'GoogleMobileAdsMediationUnity'
-  s.dependency 'AppLovinMediationGoogleAdapter'
-  s.dependency 'AppLovinMediationFacebookAdapter'
-  s.dependency 'AppLovinMediationUnityAdsAdapter'
+  s.dependency 'GoogleMobileAdsMediationPangle'
   s.platform = :ios, '13.0'
   s.static_framework = true
 
