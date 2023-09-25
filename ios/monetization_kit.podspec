@@ -23,7 +23,7 @@ A new Flutter plugin project.
   s.dependency 'GoogleMobileAdsMediationUnity'
   s.dependency 'GoogleMobileAdsMediationPangle'
   s.dependency 'GoogleMobileAdsMediationMintegral'
-  s.dependency 'GoogleMobileAdsMediationAppLovin'
+  # s.dependency 'GoogleMobileAdsMediationAppLovin'
   s.platform = :ios, '13.0'
   s.static_framework = true
 
