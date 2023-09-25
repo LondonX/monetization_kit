@@ -26,6 +26,7 @@ rootProject.allprojects {
         google()
         mavenCentral()
         maven { url 'https://artifact.bytedance.com/repository/pangle/' }
+        maven { url 'https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea' }
     }
 }
 
@@ -63,6 +64,8 @@ dependencies {
     implementation 'com.unity3d.ads:unity-ads:+'
     implementation 'com.google.ads.mediation:unity:+'
     implementation 'com.google.ads.mediation:pangle:+'
+    implementation 'com.google.ads.mediation:mintegral:+'
+    implementation 'com.google.ads.mediation:applovin:+'
     // Max mediations
     implementation 'com.applovin:applovin-sdk:+'
 }
