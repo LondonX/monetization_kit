@@ -68,6 +68,7 @@ dependencies {
     implementation 'com.google.ads.mediation:applovin:+'
     implementation 'com.google.ads.mediation:vungle:+'
     implementation 'com.google.ads.mediation:chartboost:9.2.1.0'
+    implementation 'com.google.ads.mediation:inmobi:+'
     // Max mediations
     implementation 'com.applovin:applovin-sdk:+'
 }
