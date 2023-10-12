@@ -67,10 +67,10 @@ public class MaxAdHelper: NSObject {
     }
     
     private func initSdk(result: @escaping FlutterResult) {
-        ALSdk.shared()!.mediationProvider = ALMediationProviderMAX
         ALSdk.shared()!.initializeSdk { (configuration: ALSdkConfiguration) in
-            result(alSdkConfigToMap(config: configuration))
         }
+        let configMap = alSdkConfigToMap(config: ALSdk.shared()!.configuration)
+        result(configMap)
     }
     
     public var adLoadersPool: [String : MANativeAdLoader] = [:]

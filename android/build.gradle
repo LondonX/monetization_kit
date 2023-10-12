@@ -65,7 +65,9 @@ dependencies {
     implementation 'com.google.ads.mediation:unity:+'
     implementation 'com.google.ads.mediation:pangle:+'
     implementation 'com.google.ads.mediation:mintegral:+'
-    // implementation 'com.google.ads.mediation:applovin:+'
+    implementation 'com.google.ads.mediation:applovin:+'
+    implementation 'com.google.ads.mediation:vungle:+'
+    implementation 'com.google.ads.mediation:chartboost:9.2.1.0'
     // Max mediations
     implementation 'com.applovin:applovin-sdk:+'
 }

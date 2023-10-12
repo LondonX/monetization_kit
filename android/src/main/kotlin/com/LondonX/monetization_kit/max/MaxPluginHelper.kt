@@ -16,7 +16,6 @@ import com.applovin.mediation.ads.MaxRewardedAd
 import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
-import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkConfiguration
 import io.flutter.plugin.common.MethodCall
@@ -51,10 +50,9 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
         when (call.method) {
             "max_initializeSdk" -> {
                 AppLovinSdk.getInstance(activity).settings.setVerboseLogging(true)
-                AppLovinSdk.getInstance(activity).mediationProvider = AppLovinMediationProvider.MAX
-                AppLovinSdk.initializeSdk(activity) {
-                    result.success(it.toMap())
-                }
+                val config = AppLovinSdk.getInstance(activity).configuration?.toMap()
+                AppLovinSdk.initializeSdk(activity) {}
+                result.success(config)
             }
             "max_loadBannerAd" -> {
                 val unitId = call.argument<String>("unitId")
