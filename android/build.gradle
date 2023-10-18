@@ -27,6 +27,7 @@ rootProject.allprojects {
         mavenCentral()
         maven { url 'https://artifact.bytedance.com/repository/pangle/' }
         maven { url 'https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea' }
+        maven { url 'https://android-sdk.is.com/' }
     }
 }
 
@@ -69,6 +70,7 @@ dependencies {
     implementation 'com.google.ads.mediation:vungle:+'
     implementation 'com.google.ads.mediation:chartboost:9.2.1.0'
     implementation 'com.google.ads.mediation:inmobi:+'
+    implementation 'com.google.ads.mediation:ironsource:+'
     // Max mediations
     implementation 'com.applovin:applovin-sdk:+'
 }

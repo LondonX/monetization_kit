@@ -27,6 +27,7 @@ A new Flutter plugin project.
   s.dependency 'GoogleMobileAdsMediationVungle'
   s.dependency 'GoogleMobileAdsMediationChartboost'
   s.dependency 'GoogleMobileAdsMediationInMobi'
+  s.dependency 'GoogleMobileAdsMediationIronSource'
   s.platform = :ios, '13.0'
   s.static_framework = true
 
