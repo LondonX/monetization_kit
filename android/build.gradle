@@ -28,6 +28,7 @@ rootProject.allprojects {
         maven { url 'https://artifact.bytedance.com/repository/pangle/' }
         maven { url 'https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea' }
         maven { url 'https://android-sdk.is.com/' }
+        maven { url 'https://cboost.jfrog.io/artifactory/chartboost-ads/' }
     }
 }
 
@@ -68,7 +69,7 @@ dependencies {
     implementation 'com.google.ads.mediation:mintegral:+'
     implementation 'com.google.ads.mediation:applovin:+'
     implementation 'com.google.ads.mediation:vungle:+'
-    implementation 'com.google.ads.mediation:chartboost:9.2.1.0'
+    implementation 'com.google.ads.mediation:chartboost:+'
     implementation 'com.google.ads.mediation:inmobi:+'
     implementation 'com.google.ads.mediation:ironsource:+'
     // Max mediations
