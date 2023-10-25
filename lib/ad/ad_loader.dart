@@ -251,7 +251,7 @@ class AdLoader {
         log?.call(provider, AdAction.loaded, adType, unitId);
       }
       // no next unit
-      if (_unitIndex == unitIds.length - 1) break;
+      if (unitIds.indexOf(unitId) == unitIds.length - 1) break;
     }
     for (final completer in _fullscreenLoadings) {
       completer.complete(_fullscreenAdCache);
