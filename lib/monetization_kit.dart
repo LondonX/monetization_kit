@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:monetization_kit/ad/max/max_ad_helper.dart';
 import 'package:monetization_kit/ad/provider/ad_provider.dart';
