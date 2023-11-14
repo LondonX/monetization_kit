@@ -54,41 +54,51 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 AppLovinSdk.initializeSdk(activity) {}
                 result.success(config)
             }
+
             "max_loadBannerAd" -> {
                 val unitId = call.argument<String>("unitId")
                 loadBannerAd(unitId!!, result)
             }
+
             "max_loadNativeAd" -> {
                 val unitId = call.argument<String>("unitId")
                 loadNativeAd(unitId!!, result)
             }
+
             "max_loadInterstitialAd" -> {
                 val unitId = call.argument<String>("unitId")
                 loadInterstitialAd(unitId!!, result)
             }
+
             "max_showInterstitialAd" -> {
                 val adKey = call.argument<String>("adKey")
                 showInterstitialAd(adKey, result)
             }
+
             "max_loadRewardedAd" -> {
                 val unitId = call.argument<String>("unitId")
                 loadRewardedAd(unitId!!, result)
             }
+
             "max_showRewardedAd" -> {
                 val adKey = call.argument<String>("adKey")
                 showRewardedAd(adKey, result)
             }
+
             "max_loadAppOpenAd" -> {
                 val unitId = call.argument<String>("unitId")
                 loadAppOpenAd(unitId!!, result)
             }
+
             "max_showAppOpenAd" -> {
                 val adKey = call.argument<String>("adKey")
                 showAppOpenAd(adKey, result)
             }
+
             "max_showMediationDebugger" -> {
                 AppLovinSdk.getInstance(activity).showMediationDebugger()
             }
+
             else -> return false
         }
         return true
@@ -102,7 +112,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
         val interstitialAd = MaxInterstitialAd(unitId, activity)
         val adKey = UUID.randomUUID().toString()
         interstitialAd.setListener(object : SimpleMaxAdListener() {
-            override fun onAdLoaded(ad: MaxAd?) {
+            override fun onAdLoaded(ad: MaxAd) {
                 super.onAdLoaded(ad)
                 interstitialAdsPool[adKey] = interstitialAd
                 result.success(
@@ -113,17 +123,17 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+            override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
                 super.onAdLoadFailed(adUnitId, error)
                 result.success(
                     mapOf<String, Any?>(
                         "adKey" to null,
-                        "error" to error?.toMap(),
+                        "error" to error.toMap(),
                     )
                 )
             }
 
-            override fun onAdClicked(ad: MaxAd?) {
+            override fun onAdClicked(ad: MaxAd) {
                 super.onAdClicked(ad)
                 channel.invokeMethod(
                     "max_onAdClick",
@@ -131,7 +141,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onAdDisplayed(ad: MaxAd?) {
+            override fun onAdDisplayed(ad: MaxAd) {
                 super.onAdDisplayed(ad)
                 channel.invokeMethod(
                     "max_onFullscreenAdShow",
@@ -139,7 +149,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onAdHidden(ad: MaxAd?) {
+            override fun onAdHidden(ad: MaxAd) {
                 super.onAdHidden(ad)
                 channel.invokeMethod(
                     "max_onFullscreenAdDismiss",
@@ -179,7 +189,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
         val rewardedAd = MaxRewardedAd.getInstance(unitId, activity)
         val adKey = UUID.randomUUID().toString()
         rewardedAd.setListener(object : SimpleMaxAdListener() {
-            override fun onAdLoaded(ad: MaxAd?) {
+            override fun onAdLoaded(ad: MaxAd) {
                 super.onAdLoaded(ad)
                 rewardedAdsPool[adKey] = rewardedAd
                 result.success(
@@ -190,17 +200,17 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+            override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
                 super.onAdLoadFailed(adUnitId, error)
                 result.success(
                     mapOf<String, Any?>(
                         "adKey" to null,
-                        "error" to error?.toMap(),
+                        "error" to error.toMap(),
                     )
                 )
             }
 
-            override fun onAdClicked(ad: MaxAd?) {
+            override fun onAdClicked(ad: MaxAd) {
                 super.onAdClicked(ad)
                 channel.invokeMethod(
                     "max_onAdClick",
@@ -208,7 +218,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onAdDisplayed(ad: MaxAd?) {
+            override fun onAdDisplayed(ad: MaxAd) {
                 super.onAdDisplayed(ad)
                 channel.invokeMethod(
                     "max_onFullscreenAdShow",
@@ -216,7 +226,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onAdHidden(ad: MaxAd?) {
+            override fun onAdHidden(ad: MaxAd) {
                 super.onAdHidden(ad)
                 channel.invokeMethod(
                     "max_onFullscreenAdDismiss",
@@ -224,7 +234,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onUserRewarded(ad: MaxAd?, reward: MaxReward?) {
+            override fun onUserRewarded(ad: MaxAd, reward: MaxReward) {
                 super.onUserRewarded(ad, reward)
                 channel.invokeMethod(
                     "max_onRewarded",
@@ -263,7 +273,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
         val appOpenAd = MaxAppOpenAd(unitId, activity)
         val adKey = UUID.randomUUID().toString()
         appOpenAd.setListener(object : SimpleMaxAdListener() {
-            override fun onAdLoaded(ad: MaxAd?) {
+            override fun onAdLoaded(ad: MaxAd) {
                 super.onAdLoaded(ad)
                 appOpenAdsPool[adKey] = appOpenAd
                 result.success(
@@ -274,17 +284,17 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+            override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
                 super.onAdLoadFailed(adUnitId, error)
                 result.success(
                     mapOf<String, Any?>(
                         "adKey" to null,
-                        "error" to error?.toMap(),
+                        "error" to error.toMap(),
                     )
                 )
             }
 
-            override fun onAdClicked(ad: MaxAd?) {
+            override fun onAdClicked(ad: MaxAd) {
                 super.onAdClicked(ad)
                 channel.invokeMethod(
                     "max_onAdClick",
@@ -292,7 +302,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onAdDisplayed(ad: MaxAd?) {
+            override fun onAdDisplayed(ad: MaxAd) {
                 super.onAdDisplayed(ad)
                 channel.invokeMethod(
                     "max_onFullscreenAdShow",
@@ -300,7 +310,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onAdHidden(ad: MaxAd?) {
+            override fun onAdHidden(ad: MaxAd) {
                 super.onAdHidden(ad)
                 channel.invokeMethod(
                     "max_onFullscreenAdDismiss",
@@ -339,7 +349,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
         val adLoader = MaxNativeAdLoader(unitId, activity)
         val adKey = UUID.randomUUID().toString()
         adLoader.setNativeAdListener(object : MaxNativeAdListener() {
-            override fun onNativeAdLoaded(p0: MaxNativeAdView?, p1: MaxAd?) {
+            override fun onNativeAdLoaded(p0: MaxNativeAdView?, p1: MaxAd) {
                 super.onNativeAdLoaded(p0, p1)
                 adLoadersPool[adKey] = adLoader
                 adViewsPool[adKey] = p0
@@ -351,17 +361,17 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onNativeAdLoadFailed(p0: String?, p1: MaxError?) {
+            override fun onNativeAdLoadFailed(p0: String, p1: MaxError) {
                 super.onNativeAdLoadFailed(p0, p1)
                 result.success(
                     mapOf(
                         "adKey" to null,
-                        "error" to p1?.toMap(),
+                        "error" to p1.toMap(),
                     )
                 )
             }
 
-            override fun onNativeAdClicked(p0: MaxAd?) {
+            override fun onNativeAdClicked(p0: MaxAd) {
                 super.onNativeAdClicked(p0)
                 channel.invokeMethod(
                     "max_onAdClick",
@@ -379,7 +389,7 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
         val adView = MaxAdView(unitId, activity)
         val adKey = UUID.randomUUID().toString()
         adView.setListener(object : MaxAdViewAdListener {
-            override fun onAdLoaded(ad: MaxAd?) {
+            override fun onAdLoaded(ad: MaxAd) {
                 adViewsPool[adKey] = adView
                 result.success(
                     mapOf(
@@ -389,31 +399,31 @@ class MaxPluginHelper(registry: PlatformViewRegistry, private val channel: Metho
                 )
             }
 
-            override fun onAdDisplayed(ad: MaxAd?) {}
+            override fun onAdDisplayed(ad: MaxAd) {}
 
-            override fun onAdHidden(ad: MaxAd?) {}
+            override fun onAdHidden(ad: MaxAd) {}
 
-            override fun onAdClicked(ad: MaxAd?) {
+            override fun onAdClicked(ad: MaxAd) {
                 channel.invokeMethod(
                     "max_onAdClick",
                     mapOf<String, Any?>("adKey" to adKey),
                 )
             }
 
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+            override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
                 result.success(
                     mapOf(
                         "adKey" to null,
-                        "error" to error?.toMap(),
+                        "error" to error.toMap(),
                     )
                 )
             }
 
-            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {}
+            override fun onAdDisplayFailed(ad: MaxAd, error: MaxError) {}
 
-            override fun onAdExpanded(ad: MaxAd?) {}
+            override fun onAdExpanded(ad: MaxAd) {}
 
-            override fun onAdCollapsed(ad: MaxAd?) {}
+            override fun onAdCollapsed(ad: MaxAd) {}
         })
         val width = ViewGroup.LayoutParams.MATCH_PARENT
         val height = (activity.resources.displayMetrics.density * 50).roundToInt()
