@@ -308,6 +308,9 @@ PODS:
     - FlutterMacOS
   - PromisesObjC (2.3.1)
   - UnityAds (4.9.1)
+  - user_messaging_platform (0.0.1):
+    - Flutter
+    - GoogleUserMessagingPlatform (~> 2.0)
   - VungleAds (7.1.0)
   - webview_flutter_wkwebview (0.0.1):
     - Flutter
@@ -318,6 +321,7 @@ DEPENDENCIES:
   - in_app_purchase_storekit (from `.symlinks/plugins/in_app_purchase_storekit/darwin`)
   - monetization_kit (from `.symlinks/plugins/monetization_kit/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - user_messaging_platform (from `.symlinks/plugins/user_messaging_platform/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
 SPEC REPOS:
@@ -363,6 +367,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/monetization_kit/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  user_messaging_platform:
+    :path: ".symlinks/plugins/user_messaging_platform/ios"
   webview_flutter_wkwebview:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
@@ -400,6 +406,7 @@ SPEC CHECKSUMS:
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   UnityAds: 6fa6b68b831706c9761dcd97555dd60b03e3254b
+  user_messaging_platform: 793aa4acee311bc6ff0a42661c9745f447e3ea4e
   VungleAds: e13f0ea8facb05d5511e31c5abcced79a82409e7
   webview_flutter_wkwebview: 2e2d318f21a5e036e2c3f26171342e95908bd60a
 

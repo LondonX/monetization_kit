@@ -15,8 +15,8 @@ dependencies:
   path_provider:
 
   visibility_detector:
-  google_mobile_ads: ^3.1.0
-  in_app_purchase: ^3.1.8
+  google_mobile_ads:
+  in_app_purchase:
 
 dev_dependencies:
   flutter_test:

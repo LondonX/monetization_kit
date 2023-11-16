@@ -5,6 +5,7 @@ abstract class AdProvider {
   final String name;
   const AdProvider({required this.name});
 
+  @protected
   void debugLog(Object? object) {
     if (!MonetizationKit.debug) return;
     // ignore: avoid_print

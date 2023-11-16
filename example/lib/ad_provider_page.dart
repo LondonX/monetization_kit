@@ -4,17 +4,21 @@ import 'package:monetization_kit/ad/ad_loader.dart';
 import 'package:monetization_kit/ad/widget/auto_loading_ad_container.dart';
 
 class AdProviderPage extends StatefulWidget {
-  final AdLoader native;
-  final AdLoader rewarded;
-  final AdLoader interstitial;
+  final AdLoader? native;
+  final AdLoader? banner;
+  final AdLoader? appOpen;
+  final AdLoader? interstitial;
+  final AdLoader? rewarded;
   final Function()? startMediationTest;
   final Function()? startInspector;
 
   const AdProviderPage({
     Key? key,
     required this.native,
-    required this.rewarded,
+    required this.banner,
+    required this.appOpen,
     required this.interstitial,
+    required this.rewarded,
     required this.startMediationTest,
     required this.startInspector,
   }) : super(key: key);
@@ -25,86 +29,74 @@ class AdProviderPage extends StatefulWidget {
 
 class _AdmobPageState extends State<AdProviderPage>
     with AutomaticKeepAliveClientMixin {
-  Object? _rewardedAd;
-  Object? _interstitialAd;
-  bool _rewardedAdLoading = false;
-  bool _interstitialAdLoading = false;
+  final _loadings = <AdLoader>{};
 
-  _loadRewardedAd() async {
+  _loadFullscreenAd(AdLoader adLoader) async {
+    if (_loadings.contains(adLoader)) return;
     setState(() {
-      _rewardedAdLoading = true;
+      _loadings.add(adLoader);
     });
-    final rewardedAd = await widget.rewarded.loadFullscreenAd();
+    await adLoader.loadFullscreenAd();
     setState(() {
-      _rewardedAdLoading = false;
-      _rewardedAd = rewardedAd;
+      _loadings.remove(adLoader);
     });
   }
 
-  _showRewardedAd() async {
-    final rewarded = await widget.rewarded.showFullscreenAd();
-    if (!rewarded) return;
-    setState(() {
-      _rewardedAd = null;
-    });
-  }
-
-  _loadInterstitialAd() async {
-    setState(() {
-      _interstitialAdLoading = true;
-    });
-    final interstitialAd = await widget.interstitial.loadFullscreenAd();
-    setState(() {
-      _interstitialAdLoading = false;
-      _interstitialAd = interstitialAd;
-    });
-  }
-
-  _showInterstitialAd() async {
-    final rewarded = await widget.interstitial.showFullscreenAd();
-    if (!rewarded) return;
-    setState(() {
-      _interstitialAd = null;
-    });
+  _showFullscreenAd(AdLoader adLoader) async {
+    final rewarded = await adLoader.showFullscreenAd();
+    if (!mounted) return;
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Fullscreen Ad"),
+        content: Text("type: ${adLoader.adType} rewarded: $rewarded"),
+        actions: [
+          TextButton(
+            onPressed: Navigator.of(context).pop,
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final native = widget.native;
+    final banner = widget.banner;
+    final appOpen = widget.appOpen;
+    final rewarded = widget.rewarded;
+    final interstitial = widget.interstitial;
     return ListView(
       children: [
-        AutoLoadingAdContainer(
-          adLoader: widget.native,
+        native == null
+            ? const ListTile(
+                title: Text("widget.native is null"),
+                enabled: false,
+              )
+            : AutoLoadingAdContainer(adLoader: native),
+        banner == null
+            ? const ListTile(
+                title: Text("widget.banner is null"),
+                enabled: false,
+              )
+            : AutoLoadingAdContainer(adLoader: banner),
+        _buildFullscreenAdLoaderTile(
+          context,
+          displayName: "appOpen",
+          adLoader: appOpen,
         ),
-        ListTile(
-          title: const Text("Load/Show Rewarded Ad"),
-          onTap: _rewardedAdLoading
-              ? null
-              : _rewardedAd == null
-                  ? _loadRewardedAd
-                  : _showRewardedAd,
-          subtitle: Text(
-            _rewardedAdLoading
-                ? "Loading..."
-                : _rewardedAd == null
-                    ? "Not loaded"
-                    : "✅ Loaded",
-          ),
+        _buildFullscreenAdLoaderTile(
+          context,
+          displayName: "rewarded",
+          adLoader: rewarded,
         ),
-        ListTile(
-          title: const Text("Load/Show Interstitial Ad"),
-          onTap: _interstitialAdLoading
-              ? null
-              : _interstitialAd == null
-                  ? _loadInterstitialAd
-                  : _showInterstitialAd,
-          subtitle: Text(
-            _interstitialAdLoading
-                ? "Loading..."
-                : _interstitialAd == null
-                    ? "Not loaded"
-                    : "✅ Loaded",
-          ),
+        _buildFullscreenAdLoaderTile(
+          context,
+          displayName: "interstitial",
+          adLoader: interstitial,
         ),
         ListTile(
           title: const Text("Start mediation test"),
@@ -128,4 +120,36 @@ class _AdmobPageState extends State<AdProviderPage>
 
   @override
   bool get wantKeepAlive => true;
+
+  Widget _buildFullscreenAdLoaderTile(
+    BuildContext context, {
+    required String displayName,
+    required AdLoader? adLoader,
+  }) {
+    if (adLoader == null) {
+      return ListTile(
+        title: Text("widget.$displayName is null"),
+        enabled: false,
+      );
+    }
+    final isLoading = _loadings.contains(adLoader);
+    final isLoaded = adLoader.adCacheValid;
+    return ListTile(
+      title: Text("Load/Show $displayName Ad"),
+      onTap: isLoading
+          ? null
+          : () {
+              isLoaded
+                  ? _showFullscreenAd(adLoader)
+                  : _loadFullscreenAd(adLoader);
+            },
+      subtitle: Text(
+        isLoading
+            ? "Loading..."
+            : isLoaded
+                ? "✅ Loaded"
+                : "Not loaded",
+      ),
+    );
+  }
 }
