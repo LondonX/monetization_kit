@@ -6,6 +6,7 @@ import 'package:monetization_kit/monetization_kit.dart';
 import 'package:monetization_kit_example/ad_provider_page.dart';
 import 'package:monetization_kit_example/iap_page.dart';
 import 'package:monetization_kit_example/settings_page.dart';
+import 'package:monetization_kit_example/unit_ids.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,27 +31,27 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     // Admob
     AdProviderPage(
       native: AdLoader(
-        unitIds: ["ca-app-pub-2883108589250494/6226665874"],
+        unitIds: [admNativeUnit],
         adType: AdType.nativeSmall,
         log: _admobFakeAnalytics.logAds,
       ),
       banner: AdLoader(
-        unitIds: ["ca-app-pub-2883108589250494/9685483018"],
+        unitIds: [admBannerUnit],
         adType: AdType.banner,
         log: _admobFakeAnalytics.logAds,
       ),
       appOpen: AdLoader(
-        unitIds: ["ca-app-pub-2883108589250494/8835435774"],
+        unitIds: [admAppOpenUnit],
         adType: AdType.appOpen,
         log: _admobFakeAnalytics.logAds,
       ),
       rewarded: AdLoader(
-        unitIds: ["ca-app-pub-2883108589250494/3774680789"],
+        unitIds: [admRewardedUnit],
         adType: AdType.rewarded,
         log: _admobFakeAnalytics.logAds,
       ),
       interstitial: AdLoader(
-        unitIds: ["ca-app-pub-2883108589250494/5119514054"],
+        unitIds: [admInterstitialUnit],
         adType: AdType.interstitial,
         log: _admobFakeAnalytics.logAds,
       ),
@@ -60,19 +61,19 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     //max
     AdProviderPage(
       native: AdLoader(
-        unitIds: ["b98b4d46aac279a7"],
+        unitIds: [maxNativeUnit],
         adType: AdType.native,
         log: _maxFakeAnalytics.logAds,
       ),
       banner: null,
       appOpen: null,
       rewarded: AdLoader(
-        unitIds: ["f1dafda1d3cf071f"],
+        unitIds: [maxRewardedUnit],
         adType: AdType.rewarded,
         log: _maxFakeAnalytics.logAds,
       ),
       interstitial: AdLoader(
-        unitIds: ["87ee2d50d54de7f8"],
+        unitIds: [maxInterstitialUnit],
         adType: AdType.interstitial,
         log: _maxFakeAnalytics.logAds,
       ),
@@ -83,34 +84,34 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     AdProviderPage(
       native: AdLoader(
         unitIds: [
-          "ca-app-pub-2883108589250494/6226665874",
-          "b98b4d46aac279a7",
+          admNativeUnit,
+          maxNativeUnit,
         ],
         adType: AdType.native,
         log: _mixedFakeAnalytics.logAds,
       ),
       banner: AdLoader(
-        unitIds: ["ca-app-pub-2883108589250494/9685483018"],
+        unitIds: [admBannerUnit],
         adType: AdType.banner,
         log: _mixedFakeAnalytics.logAds,
       ),
       appOpen: AdLoader(
-        unitIds: ["ca-app-pub-2883108589250494/8835435774"],
+        unitIds: [admAppOpenUnit],
         adType: AdType.appOpen,
         log: _mixedFakeAnalytics.logAds,
       ),
       rewarded: AdLoader(
         unitIds: [
-          "ca-app-pub-2883108589250494/3774680789",
-          "f1dafda1d3cf071f",
+          admRewardedUnit,
+          maxRewardedUnit,
         ],
         adType: AdType.rewarded,
         log: _mixedFakeAnalytics.logAds,
       ),
       interstitial: AdLoader(
         unitIds: [
-          "ca-app-pub-2883108589250494/5119514054",
-          "87ee2d50d54de7f8",
+          admInterstitialUnit,
+          maxInterstitialUnit,
         ],
         adType: AdType.interstitial,
         log: _mixedFakeAnalytics.logAds,
