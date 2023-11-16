@@ -17,6 +17,7 @@ dependencies:
   visibility_detector:
   google_mobile_ads:
   in_app_purchase:
+  user_messaging_platform:
 
 dev_dependencies:
   flutter_test:

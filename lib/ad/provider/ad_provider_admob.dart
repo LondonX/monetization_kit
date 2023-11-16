@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:user_messaging_platform/user_messaging_platform.dart' as ump;
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../widget/ad_visibility.dart';
 import 'ad_provider.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 const _adRequest = AdManagerAdRequest(httpTimeoutMillis: 5000);
 
@@ -12,12 +14,13 @@ class AdProviderAdMob extends AdProvider {
 
   @override
   Future<bool> init() async {
+    await _updateUmpConsent();
     final initStatus = await MobileAds.instance.initialize();
     debugLog(
       "Initialize finish with ${initStatus.adapterStatuses.length} adapter(s)",
     );
     initStatus.adapterStatuses.forEach((key, value) {
-      debugLog('Adapter status for $key: ${value.description}');
+      debugLog('Adapter status for $key: ${value.state}');
     });
     return true;
   }
@@ -281,5 +284,25 @@ class AdProviderAdMob extends AdProvider {
   void showAppOpenAdIfLoaded(Object appOpenAd) {
     if (appOpenAd is! AppOpenAd) return;
     appOpenAd.show();
+  }
+
+  Future<void> _updateUmpConsent() async {
+    try {
+      final info =
+          await ump.UserMessagingPlatform.instance.requestConsentInfoUpdate();
+      debugLog("current UMP info: $info");
+      if (info.consentStatus == ump.ConsentStatus.required) {
+        final result =
+            await ump.UserMessagingPlatform.instance.showConsentForm();
+        debugLog("result UMP info: $result");
+      }
+    } catch (e, stack) {
+      debugLog("UMP not config");
+      log(
+        "UMP not config",
+        error: e,
+        stackTrace: stack,
+      );
+    }
   }
 }
