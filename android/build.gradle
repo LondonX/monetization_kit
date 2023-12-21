@@ -67,7 +67,7 @@ dependencies {
     implementation 'com.google.ads.mediation:unity:+'
     implementation 'com.google.ads.mediation:pangle:+'
     implementation 'com.google.ads.mediation:mintegral:+'
-    implementation 'com.google.ads.mediation:applovin:+'
+    // implementation 'com.google.ads.mediation:applovin:+' // 11.11.3.0非常影响启动速度
     // implementation 'com.google.ads.mediation:vungle:+'
     implementation 'com.google.ads.mediation:chartboost:+'
     implementation 'com.google.ads.mediation:inmobi:+'

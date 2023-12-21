@@ -23,7 +23,7 @@ A new Flutter plugin project.
   s.dependency 'GoogleMobileAdsMediationUnity'
   s.dependency 'GoogleMobileAdsMediationPangle'
   s.dependency 'GoogleMobileAdsMediationMintegral'
-  s.dependency 'GoogleMobileAdsMediationAppLovin'
+  # s.dependency 'GoogleMobileAdsMediationAppLovin' # 11.11.3.0非常影响启动速度
   s.dependency 'GoogleMobileAdsMediationVungle'
   s.dependency 'GoogleMobileAdsMediationChartboost'
   s.dependency 'GoogleMobileAdsMediationInMobi'
