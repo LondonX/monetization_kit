@@ -20,13 +20,13 @@ class IAP {
 
   IAP({required this.verifyPurchase}) {
     InAppPurchase.instance.purchaseStream.listen((detailsList) async {
-      // product can be restore, stop auto revoking
-      _purchaseRevoking?.cancel();
       _storing?.complete();
       _storing = null;
       _iapLog("purchaseStream detailsList: ${detailsList.length}");
       final verifyNeeded = <String, String>{};
       for (var detail in detailsList) {
+        // product can be restore, stop auto revoking
+        _purchaseRevoking?.cancel();
         if (detail.status == PurchaseStatus.pending) {
           _iapLog("purchaseStream pending...");
           return;
