@@ -35,6 +35,7 @@ class MonetizationKit {
     ],
     Future<bool> Function(String productId, String serverVerificationData)?
         verifyPurchase,
+    @Deprecated("IAP is Out of maintains, DO NOT USE") bool withIap = false,
   }) async {
     // init AdProviders
     final withAdmob = adProviders.any(
@@ -54,7 +55,9 @@ class MonetizationKit {
     adsInit.value = true;
     // init iap
     await ConsumingManager.instance.init();
-    _iap = IAP(verifyPurchase: verifyPurchase);
+    if (withIap) {
+      _iap = IAP(verifyPurchase: verifyPurchase);
+    }
     return true;
   }
 
@@ -75,5 +78,6 @@ class MonetizationKit {
     await _maxAdHelper.showMediationDebugger();
   }
 
+  @Deprecated("IAP is Out of maintains, DO NOT USE")
   IAP get iap => _iap!;
 }
