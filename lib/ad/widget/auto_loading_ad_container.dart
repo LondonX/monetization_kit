@@ -12,6 +12,7 @@ class AutoLoadingAdContainer extends StatefulWidget {
   final bool initAdLoading;
   final ColorScheme? colorScheme;
   final bool keepSizeWhenNoAds;
+  final bool autoConsume;
 
   const AutoLoadingAdContainer({
     Key? key,
@@ -20,6 +21,7 @@ class AutoLoadingAdContainer extends StatefulWidget {
     this.initAdLoading = true,
     this.colorScheme,
     this.keepSizeWhenNoAds = true,
+    this.autoConsume = true,
   }) : super(key: key);
 
   @override
@@ -28,7 +30,6 @@ class AutoLoadingAdContainer extends StatefulWidget {
 
 class _AutoLoadingAdContainerState extends State<AutoLoadingAdContainer>
     with WidgetsBindingObserver {
-  Widget? _ad;
   final _key = GlobalKey();
   DateTime _loadedAt = DateTime.fromMillisecondsSinceEpoch(0);
   bool _appActive = true;
@@ -46,11 +47,10 @@ class _AutoLoadingAdContainerState extends State<AutoLoadingAdContainer>
     // 缓存已在loadWidgetAd中处理
     final ad = await widget.adLoader.loadWidgetAd(
       colorScheme: widget.colorScheme ?? Theme.of(context).colorScheme,
+      autoConsume: widget.autoConsume,
     );
     if (ad == null) return;
-    setState(() {
-      _ad = ad;
-    });
+    setState(() {});
   }
 
   Timer? _widgetAdLoading;
@@ -106,10 +106,10 @@ class _AutoLoadingAdContainerState extends State<AutoLoadingAdContainer>
       onVisibilityChanged: (info) {
         _visibility = info.visibleFraction > 0.5;
       },
-      child: _ad != null || widget.keepSizeWhenNoAds
+      child: widget.adLoader.widgetAdCache != null || widget.keepSizeWhenNoAds
           ? AspectRatio(
               aspectRatio: ratio,
-              child: _ad,
+              child: widget.adLoader.widgetAdCache,
             )
           : const SizedBox(height: 0.01),
     );

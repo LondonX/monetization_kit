@@ -64,11 +64,15 @@ class AdLoader {
   Widget? _widgetAdCache;
   final _widgetAdLoadings = <Completer<Widget?>>[];
   bool _isWidgetAdLoading = false;
+  Widget? get widgetAdCache => _widgetAdCache;
 
   ///
   /// load Widget ads (Native/Banner)
   ///
-  Future<Widget?> loadWidgetAd({ColorScheme? colorScheme}) async {
+  Future<Widget?> loadWidgetAd({
+    ColorScheme? colorScheme,
+    bool autoConsume = true,
+  }) async {
     if (adCacheValid) {
       _log("loadWidgetAd cachedAt: $_adCachedAt");
       return _widgetAdCache!;
@@ -99,7 +103,7 @@ class AdLoader {
             isLarge: adType == AdType.native,
             firstShow: () {
               log?.call(provider, AdAction.impress, adType, unitId);
-              _consumeWidgetAd();
+              if (autoConsume) _consumeWidgetAd();
             },
             onClick: () {
               log?.call(provider, AdAction.click, adType, unitId);
@@ -114,7 +118,7 @@ class AdLoader {
             isLarge: adType == AdType.banner,
             firstShow: () {
               log?.call(provider, AdAction.impress, adType, unitId);
-              _consumeWidgetAd();
+              if (autoConsume) _consumeWidgetAd();
             },
             onClick: () {
               log?.call(provider, AdAction.click, adType, unitId);
@@ -303,7 +307,7 @@ class AdLoader {
   }
 
   void _consumeWidgetAd() {
-    _widgetAdCache = null;
+    _adCachedAt = DateTime.fromMillisecondsSinceEpoch(0);
   }
 
   double get widgetRatio {
