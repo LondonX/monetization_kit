@@ -40,13 +40,13 @@ class AdSmall : SimpleAdView {
             
             _viewInfoContainer.leadingAnchor.constraint(equalTo: _viewMediaContainer.trailingAnchor, constant: 8),
             _viewInfoContainer.topAnchor.constraint(equalTo: _viewMediaContainer.topAnchor),
-            _viewInfoContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            _viewInfoContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
             _viewInfoContainer.bottomAnchor.constraint(equalTo: _viewMediaContainer.bottomAnchor),
             
-            _headlineView.leadingAnchor.constraint(equalTo: _viewInfoContainer.leadingAnchor),
+            _headlineView.leadingAnchor.constraint(equalTo: _viewInfoContainer.leadingAnchor, constant: 8),
             _headlineView.trailingAnchor.constraint(equalTo: _callToActionView.leadingAnchor, constant: -8),
             _headlineView.bottomAnchor.constraint(equalTo: _viewInfoContainer.centerYAnchor, constant: -8),
-            _bodyView.leadingAnchor.constraint(equalTo: _viewInfoContainer.leadingAnchor),
+            _bodyView.leadingAnchor.constraint(equalTo: _viewInfoContainer.leadingAnchor, constant: 8),
             _bodyView.topAnchor.constraint(equalTo: _viewInfoContainer.centerYAnchor, constant: -7),
             _bodyView.trailingAnchor.constraint(equalTo: _callToActionView.leadingAnchor, constant: -8),
             
@@ -58,7 +58,7 @@ class AdSmall : SimpleAdView {
             withIcon
             ? _callToActionView.topAnchor.constraint(equalTo: _viewInfoContainer.centerYAnchor, constant: 4)
             : _callToActionView.centerYAnchor.constraint(equalTo: _viewInfoContainer.centerYAnchor),
-            _callToActionView.trailingAnchor.constraint(equalTo: _viewInfoContainer.trailingAnchor),
+            _callToActionView.trailingAnchor.constraint(equalTo: _viewInfoContainer.trailingAnchor, constant: -8),
             _callToActionView.widthAnchor.constraint(greaterThanOrEqualToConstant: 44),
             _callToActionView.heightAnchor.constraint(equalToConstant: 24),
         ]
