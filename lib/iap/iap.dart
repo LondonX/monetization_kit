@@ -1,187 +1,217 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:monetization_kit/iap/consuming_manager.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
+import 'package:monetization_kit/monetization_kit.dart';
 
-export 'package:in_app_purchase/in_app_purchase.dart';
+import 'non_consumable_state_manager.dart';
 
 class IAP {
-  Future<bool> Function(
-    String productId,
-    String serverVerificationData,
-  )? verifyPurchase;
+  final _nonConsumableStateManager = NonConsumableStateManager();
+  final _verifiers = <PurchaseVerifier>[];
 
-  Completer<bool>? _purchasing;
-  Completer<void>? _storing;
-  Timer? _purchaseRevoking;
-  final _stateListeners = <String, ValueNotifier<bool>>{};
+  final purchasing = ValueNotifier<Purchasing?>(null);
 
-  IAP({required this.verifyPurchase}) {
-    InAppPurchase.instance.purchaseStream.listen((detailsList) async {
-      _storing?.complete();
-      _storing = null;
-      _iapLog("purchaseStream detailsList: ${detailsList.length}");
-      final verifyNeeded = <String, String>{};
-      for (var detail in detailsList) {
-        // product can be restore, stop auto revoking
-        _purchaseRevoking?.cancel();
-        if (detail.status == PurchaseStatus.pending) {
-          _iapLog("purchaseStream pending...");
-          return;
-        }
-        // 手动完成订阅
-        if (detail.pendingCompletePurchase) {
-          InAppPurchase.instance.completePurchase(detail);
-        }
-        if (detail.status == PurchaseStatus.canceled) {
-          _purchasing?.complete(false);
-          return;
-        }
-        if (detail.productID.isEmpty ||
-            detail.verificationData.serverVerificationData.isEmpty) {
-          continue;
-        }
-        verifyNeeded[detail.productID] =
-            detail.verificationData.serverVerificationData;
-      }
-      _iapLog("purchaseStream verifyNeeded: ${verifyNeeded.length}");
-      // 验证订阅
-      bool verified = false;
-      for (var productId in verifyNeeded.keys) {
-        final token = verifyNeeded[productId]!;
-        _iapLog("purchaseStream verifyPurchase: productId: $productId");
-        verified = verifyPurchase == null
-            ? true
-            : await verifyPurchase!.call(
-                productId,
-                token,
-              );
-        final listener = _stateListeners[productId] ??= ValueNotifier(verified);
-        listener.value = verified;
-        final consuming =
-            Consuming(productId: productId, serverVerificationData: token);
-        if (verified) {
-          ConsumingManager.instance.apply(
-            (consumingList) {
-              if (!consumingList.contains(consuming)) {
-                consumingList.add(consuming);
-              }
-            },
-          );
-        } else {
-          ConsumingManager.instance.apply(
-            (consumingList) {
-              if (consumingList.contains(consuming)) {
-                consumingList.remove(consuming);
-              }
-            },
-          );
-        }
-        if (verified == false) break;
-      }
-      ConsumingManager.instance.apply(
-        (consumingList) {
-          for (var consuming in consumingList) {
-            // already unsubscribed
-            if (!verifyNeeded.keys.contains(consuming.productId) ||
-                !verifyNeeded.values
-                    .contains(consuming.serverVerificationData)) {
-              _stateListeners[consuming.productId]?.value = false;
-            }
-          }
-        },
-      );
-      _purchasing?.complete(verified);
-    });
+  ///
+  /// init IAP class
+  ///
+  Future<void> init() async {
+    await _nonConsumableStateManager.init();
+    await FlutterInappPurchase.instance.finalize();
+    final result = await FlutterInappPurchase.instance.initialize();
+    _log("init result: $result");
+    FlutterInappPurchase.purchaseUpdated
+        .asBroadcastStream()
+        .listen(_purchaseUpdate);
+    FlutterInappPurchase.purchaseError
+        .asBroadcastStream()
+        .listen(_purchaseError);
   }
 
   ///
-  /// check if IAP is available
+  /// add [PurchaseVerifier]
   ///
-  Future<bool> connect() async {
-    return await InAppPurchase.instance.isAvailable();
+  void addVerifier(PurchaseVerifier verifier) {
+    _verifiers.add(verifier);
   }
 
   ///
-  /// restore purchase
-  /// [revokeTimeout] Auto revoking purchase state after given duration, default 5s.
+  /// remove [PurchaseVerifier]
   ///
-  Future<void> restore({
-    Duration revokeTimeout = const Duration(seconds: 5),
-  }) async {
-    _purchaseRevoking = Timer(revokeTimeout, () {
-      for (var listener in _stateListeners.values) {
-        listener.value = false;
-      }
-      ConsumingManager.instance.apply((consumingList) => consumingList.clear());
-      _storing?.complete();
-      _storing = null;
-    });
-    _storing = Completer();
-    await InAppPurchase.instance.restorePurchases();
-    await _storing!.future;
-  }
-
-  ValueNotifier<bool> stateOf(String productId) {
-    final purchased = ConsumingManager.instance.list.any(
-      (consuming) => consuming.productId == productId,
-    );
-    return _stateListeners[productId] ??= ValueNotifier(purchased);
+  void removeVerifier(PurchaseVerifier verifier) {
+    _verifiers.remove(verifier);
   }
 
   ///
-  /// query products with product ID list
+  /// state of Subscription or non-consumable product
+  /// returns in [ValueNotifier<bool>]
   ///
-  Future<List<ProductDetails>> queryProducts(List<String> productIdList) async {
-    final resp = await InAppPurchase.instance.queryProductDetails({
-      ...productIdList,
-      "queryId-${DateTime.now().millisecondsSinceEpoch}",
-    });
-    return resp.productDetails;
+  ValueNotifier<bool> stateOfNonConsumable(String productId) {
+    return _nonConsumableStateManager.stateOf(productId);
   }
 
   ///
-  /// return true if purchase is succeed
+  /// apply purchase from AppStore
+  /// restore the state of Subscription or non-consumable product
+  /// result will update in [stateOfNonConsumable]
   ///
-  Future<bool> purchase(
-    ProductType type,
-    ProductDetails product, {
-    Map<String, dynamic>? extra,
-  }) async {
-    _iapLog("purchase type: ${type.name}");
-    if (_purchasing != null) return false;
-    _purchasing = Completer();
-    final Future<bool> Function({required PurchaseParam purchaseParam}) buyFunc;
-    switch (type) {
-      case ProductType.consumable:
-        buyFunc = InAppPurchase.instance.buyConsumable;
-        break;
-      case ProductType.inconsumable:
-        buyFunc = InAppPurchase.instance.buyNonConsumable;
-        break;
+  Future<void> restore() async {
+    final applyingProducts =
+        await FlutterInappPurchase.instance.getAppStoreInitiatedProducts();
+    for (var product in applyingProducts) {
+      final productId = product.productId;
+      if (productId == null) continue;
+      await purchase(productId);
     }
-    buyFunc.call(
-      purchaseParam: PurchaseParam(
-        productDetails: product,
-        applicationUserName: extra == null ? null : jsonEncode(extra),
-      ),
+    final purchases =
+        (await FlutterInappPurchase.instance.getAvailablePurchases()) ?? [];
+    final productIds = purchases.map((e) => e.productId).whereType<String>();
+    for (var productId in productIds) {
+      stateOfNonConsumable(productId).value = true;
+    }
+    _nonConsumableStateManager.revokeNotExits(productIds);
+    //revoke purchase cache
+    await _nonConsumableStateManager.save();
+  }
+
+  ///
+  /// query products and subscriptions by product ids
+  ///
+  Future<List<IAPItem>> queryProducts(List<String> productIds) async {
+    final lists = await Future.wait([
+      FlutterInappPurchase.instance.getProducts(productIds),
+      FlutterInappPurchase.instance.getSubscriptions(productIds),
+    ]);
+    final products = lists[0];
+    final subscriptions = lists[1];
+    // doc: "iOS does not differentiate between IAP products and subscriptions."
+    final results = [...products];
+    for (var sub in subscriptions) {
+      if (results.any((e) => e.productId == sub.productId)) continue;
+      results.add(sub);
+    }
+    return results;
+  }
+
+  Future<bool> purchase(String productId) async {
+    final lists = await Future.wait([
+      FlutterInappPurchase.instance.getProducts([productId]),
+      FlutterInappPurchase.instance.getSubscriptions([productId]),
+    ]);
+    final products = lists[0];
+    final subscriptions = lists[1];
+    final ProductType type;
+    if (products.any((e) => e.productId == productId)) {
+      type = ProductType.consumable;
+      //TODO non-consumable product
+    } else if (subscriptions.any((e) => e.productId == productId)) {
+      type = ProductType.nonConsumable;
+    } else {
+      _log("product/subscription not found, productId: $productId");
+      return false;
+    }
+    if (purchasing.value != null) {
+      // current purchasing not finished.
+      return false;
+    }
+    final value = Purchasing(
+      productId: productId,
+      completer: Completer<bool>(),
+      type: type,
     );
-    final result = await _purchasing!.future;
-    _purchasing = null;
-    _iapLog("purchase type: ${type.name} result: $result");
-    return result;
+    purchasing.value = value;
+    try {
+      final f = type == ProductType.consumable
+          ? FlutterInappPurchase.instance.requestPurchase
+          : FlutterInappPurchase.instance.requestSubscription;
+      final result = await f.call(
+        productId,
+      );
+      _log("purchase result<${result.runtimeType}>: $result");
+    } catch (e, stack) {
+      _log("Failed during purchase e: $e");
+      debugPrintStack(stackTrace: stack);
+      purchasing.value = null;
+      if (!value.completer.isCompleted) {
+        value.completer.complete(false);
+      }
+    }
+    return await value.completer.future;
+  }
+
+  Future<void> _purchaseUpdate(PurchasedItem? item) async {
+    final purchasingValue = purchasing.value;
+    final productId = item?.productId;
+    final purchaseToken = item?.purchaseToken;
+    if (item == null ||
+        productId == null ||
+        purchaseToken == null ||
+        purchasingValue == null) return;
+    final isPaid = item.purchaseStateAndroid == PurchaseState.purchased ||
+        item.transactionStateIOS == TransactionState.purchased ||
+        item.transactionStateIOS ==
+            TransactionState.restored; // purchase from app store
+    if (!isPaid) return;
+    var success = true;
+    for (var verifier in _verifiers) {
+      if (!await verifier.call(productId, purchaseToken)) {
+        _log("purchaseUpdate verifier returns false");
+        success = false;
+        break;
+      }
+    }
+    if (success) {
+      FlutterInappPurchase.instance.finishTransaction(
+        item,
+        isConsumable: purchasingValue.type == ProductType.consumable,
+      );
+      if (purchasingValue.type == ProductType.nonConsumable) {
+        stateOfNonConsumable(productId).value = true;
+        _nonConsumableStateManager.save();
+      }
+    }
+    final completer = purchasingValue.completer;
+    if (!completer.isCompleted) {
+      completer.complete(success);
+    }
+    purchasing.value = null;
+  }
+
+  Future<void> _purchaseError(PurchaseResult? result) async {
+    final purchasingValue = purchasing.value;
+    if (result == null ||
+        purchasingValue == null ||
+        purchasingValue.completer.isCompleted) return;
+    _log("purchaseError: $result, productId: ${purchasingValue.productId}");
+    purchasingValue.completer.complete(false);
+    purchasing.value = null;
   }
 }
 
-_iapLog(Object? obj) {
-  if (kReleaseMode) return;
-  // ignore: avoid_print
-  print("[IAP]$obj");
+_log(Object? obj) {
+  if (MonetizationKit.debug) {
+    // ignore: avoid_print
+    print("[IAP]$obj");
+  }
+}
+
+typedef PurchaseVerifier = FutureOr<bool> Function(
+  String productId,
+  String purchaseToken,
+);
+
+class Purchasing {
+  final String productId;
+  final Completer<bool> completer;
+  final ProductType type;
+  const Purchasing({
+    required this.productId,
+    required this.completer,
+    required this.type,
+  });
 }
 
 enum ProductType {
   consumable,
-  inconsumable,
+  nonConsumable,
 }
