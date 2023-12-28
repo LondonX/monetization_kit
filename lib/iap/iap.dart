@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
 import 'package:monetization_kit/monetization_kit.dart';
 
-import 'non_consumable_state_manager.dart';
+import 'purchase_state_manager.dart';
+import 'verifier/purchase_verifier.dart';
 
 class IAP {
-  final _nonConsumableStateManager = NonConsumableStateManager();
+  final _nonConsumableStateManager = PurchaseStateManager();
   final _verifiers = <PurchaseVerifier>[];
 
   final purchasing = ValueNotifier<Purchasing?>(null);
@@ -46,14 +47,14 @@ class IAP {
   /// state of Subscription or non-consumable product
   /// returns in [ValueNotifier<bool>]
   ///
-  ValueNotifier<bool> stateOfNonConsumable(String productId) {
+  ValueNotifier<bool> stateOf(String productId) {
     return _nonConsumableStateManager.stateOf(productId);
   }
 
   ///
   /// apply purchase from AppStore
   /// restore the state of Subscription or non-consumable product
-  /// result will update in [stateOfNonConsumable]
+  /// result will update in [stateOf]
   ///
   Future<void> restore() async {
     final applyingProducts =
@@ -65,11 +66,35 @@ class IAP {
     }
     final purchases =
         (await FlutterInappPurchase.instance.getAvailablePurchases()) ?? [];
-    final productIds = purchases.map((e) => e.productId).whereType<String>();
-    for (var productId in productIds) {
-      stateOfNonConsumable(productId).value = true;
+    final distinctedPurchases = <PurchasedItem>[];
+    //sort by new to old
+    for (var item in purchases.reversed) {
+      if (distinctedPurchases.any((e) =>
+          e.originalTransactionIdentifierIOS != null &&
+          e.originalTransactionIdentifierIOS ==
+              item.originalTransactionIdentifierIOS)) continue;
+      distinctedPurchases.add(item);
     }
-    _nonConsumableStateManager.revokeNotExits(productIds);
+    for (var purchase in distinctedPurchases) {
+      final productId = purchase.productId;
+      final purchaseToken =
+          purchase.purchaseToken ?? purchase.transactionReceipt;
+      if (productId == null || purchaseToken == null) continue;
+      var success = true;
+      for (var verifier in _verifiers) {
+        if (!await verifier.verify(productId, purchaseToken)) {
+          _log(
+            "verifier<${verifier.runtimeType}> returns false during restore",
+          );
+          success = false;
+          break;
+        }
+      }
+      stateOf(productId).value = success;
+    }
+    _nonConsumableStateManager.revokeNotExits(
+      distinctedPurchases.map((e) => e.productId).whereType(),
+    );
     //revoke purchase cache
     await _nonConsumableStateManager.save();
   }
@@ -124,10 +149,7 @@ class IAP {
       final f = type == ProductType.consumable
           ? FlutterInappPurchase.instance.requestPurchase
           : FlutterInappPurchase.instance.requestSubscription;
-      final result = await f.call(
-        productId,
-      );
-      _log("purchase result<${result.runtimeType}>: $result");
+      f.call(productId);
     } catch (e, stack) {
       _log("Failed during purchase e: $e");
       debugPrintStack(stackTrace: stack);
@@ -142,7 +164,7 @@ class IAP {
   Future<void> _purchaseUpdate(PurchasedItem? item) async {
     final purchasingValue = purchasing.value;
     final productId = item?.productId;
-    final purchaseToken = item?.purchaseToken;
+    final purchaseToken = item?.purchaseToken ?? item?.transactionReceipt;
     if (item == null ||
         productId == null ||
         purchaseToken == null ||
@@ -154,8 +176,10 @@ class IAP {
     if (!isPaid) return;
     var success = true;
     for (var verifier in _verifiers) {
-      if (!await verifier.call(productId, purchaseToken)) {
-        _log("purchaseUpdate verifier returns false");
+      if (!await verifier.verify(productId, purchaseToken)) {
+        _log(
+          "verifier<${verifier.runtimeType}> returns false during _purchaseUpdate",
+        );
         success = false;
         break;
       }
@@ -165,10 +189,8 @@ class IAP {
         item,
         isConsumable: purchasingValue.type == ProductType.consumable,
       );
-      if (purchasingValue.type == ProductType.nonConsumable) {
-        stateOfNonConsumable(productId).value = true;
-        _nonConsumableStateManager.save();
-      }
+      stateOf(productId).value = true;
+      _nonConsumableStateManager.save();
     }
     final completer = purchasingValue.completer;
     if (!completer.isCompleted) {
@@ -194,11 +216,6 @@ _log(Object? obj) {
     print("[IAP]$obj");
   }
 }
-
-typedef PurchaseVerifier = FutureOr<bool> Function(
-  String productId,
-  String purchaseToken,
-);
 
 class Purchasing {
   final String productId;

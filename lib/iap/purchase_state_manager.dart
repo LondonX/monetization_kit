@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-class NonConsumableStateManager {
-  final _subscriptionStatePool = <String, ValueNotifier<bool>>{};
+class PurchaseStateManager {
+  final _statePool = <String, ValueNotifier<bool>>{};
 
   late File _file;
   Future<void> init() async {
@@ -22,18 +22,18 @@ class NonConsumableStateManager {
   }
 
   void revokeNotExits(Iterable<String> productIds) {
-    for (var productId in _subscriptionStatePool.keys) {
+    for (var productId in _statePool.keys) {
       if (productIds.contains(productId)) continue;
-      _subscriptionStatePool[productId]?.value = false;
+      _statePool[productId]?.value = false;
     }
   }
 
   Future<void> save() async {
-    final json = jsonEncode(_subscriptionStatePool.keys.toList());
+    final json = jsonEncode(_statePool.keys.toList());
     await _file.writeAsBytes(json.codeUnits.reversed.toList());
   }
 
   ValueNotifier<bool> stateOf(String productId) {
-    return _subscriptionStatePool[productId] ??= ValueNotifier(false);
+    return _statePool[productId] ??= ValueNotifier(false);
   }
 }
