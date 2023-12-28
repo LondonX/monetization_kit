@@ -5,7 +5,6 @@ import 'package:monetization_kit/ad/max/max_ad_helper.dart';
 import 'package:monetization_kit/ad/provider/ad_provider.dart';
 import 'package:monetization_kit/ad/provider/ad_provider_admob.dart';
 import 'package:monetization_kit/ad/provider/ad_provider_max.dart';
-import 'package:monetization_kit/iap/consuming_manager.dart';
 import 'package:monetization_kit/iap/iap.dart';
 
 class MonetizationKit {
@@ -17,7 +16,7 @@ class MonetizationKit {
 
   final adProviders = <AdProvider>[];
   final _maxAdHelper = MaxAdHelper.instance;
-  IAP? _iap;
+  final IAP _iap = IAP();
 
   final adsInit = ValueNotifier(false);
 
@@ -35,7 +34,7 @@ class MonetizationKit {
     ],
     Future<bool> Function(String productId, String serverVerificationData)?
         verifyPurchase,
-    @Deprecated("IAP is Out of maintains, DO NOT USE") bool withIap = false,
+    bool withIap = true,
   }) async {
     // init AdProviders
     final withAdmob = adProviders.any(
@@ -54,9 +53,8 @@ class MonetizationKit {
     this.adProviders.addAll(adProviders);
     adsInit.value = true;
     // init iap
-    await ConsumingManager.instance.init();
     if (withIap) {
-      _iap = IAP(verifyPurchase: verifyPurchase);
+      await _iap.init();
     }
     return true;
   }
@@ -78,6 +76,5 @@ class MonetizationKit {
     await _maxAdHelper.showMediationDebugger();
   }
 
-  @Deprecated("IAP is Out of maintains, DO NOT USE")
-  IAP get iap => _iap!;
+  IAP get iap => _iap;
 }

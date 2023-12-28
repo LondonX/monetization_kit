@@ -1,6 +1,6 @@
 name: monetization_kit
 description: A new Flutter plugin project.
-version: 1.0.5+1050
+version: 1.0.6+1060
 homepage: "https://github.com/LondonX/monetization_kit"
 publish_to: none
 
@@ -16,7 +16,7 @@ dependencies:
 
   visibility_detector:
   google_mobile_ads:
-  in_app_purchase:
+  flutter_inapp_purchase:
   user_messaging_platform:
 
 dev_dependencies:
