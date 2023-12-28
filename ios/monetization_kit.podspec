@@ -19,15 +19,6 @@ A new Flutter plugin project.
   s.dependency 'google_mobile_ads'
   s.dependency 'AppLovinSDK'
   s.dependency 'GoogleMobileAdsMediationTestSuite'
-  s.dependency 'GoogleMobileAdsMediationFacebook'
-  s.dependency 'GoogleMobileAdsMediationUnity'
-  s.dependency 'GoogleMobileAdsMediationPangle'
-  s.dependency 'GoogleMobileAdsMediationMintegral'
-  s.dependency 'GoogleMobileAdsMediationAppLovin'
-  s.dependency 'GoogleMobileAdsMediationVungle'
-  s.dependency 'GoogleMobileAdsMediationChartboost'
-  s.dependency 'GoogleMobileAdsMediationInMobi'
-  s.dependency 'GoogleMobileAdsMediationIronSource'
   s.platform = :ios, '13.0'
   s.static_framework = true
 

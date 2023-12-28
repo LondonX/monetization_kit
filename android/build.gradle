@@ -62,16 +62,6 @@ dependencies {
 
     // Admob mediations
     implementation 'com.google.android.ads:mediation-test-suite:+'
-    implementation 'com.google.ads.mediation:facebook:+'
-    implementation 'com.unity3d.ads:unity-ads:+'
-    implementation 'com.google.ads.mediation:unity:+'
-    implementation 'com.google.ads.mediation:pangle:+'
-    implementation 'com.google.ads.mediation:mintegral:+'
-    implementation 'com.google.ads.mediation:applovin:+'
-    // implementation 'com.google.ads.mediation:vungle:+'
-    implementation 'com.google.ads.mediation:chartboost:+'
-    implementation 'com.google.ads.mediation:inmobi:+'
-    implementation 'com.google.ads.mediation:ironsource:+'
     // Max mediations
     implementation 'com.applovin:applovin-sdk:+'
 }
