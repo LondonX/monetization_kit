@@ -1,7 +1,6 @@
 import Flutter
 import UIKit
 import google_mobile_ads
-import FBAudienceNetwork
 import GoogleMobileAdsMediationTestSuite
 
 public class MonetizationKitPlugin: NSObject, FlutterPlugin {
@@ -31,8 +30,6 @@ public class MonetizationKitPlugin: NSObject, FlutterPlugin {
                 factoryId: "admobNative",
                 nativeAdFactory: AdmobNative()
               )
-              // Admob mediations
-              FBAdSettings.setAdvertiserTrackingEnabled(true)
           }
           result(true)
           break
