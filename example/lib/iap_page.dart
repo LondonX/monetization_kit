@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:monetization_kit/iap/iap.dart';
 import 'package:monetization_kit/monetization_kit.dart';
 
 class IAPPage extends StatefulWidget {
@@ -11,7 +10,7 @@ class IAPPage extends StatefulWidget {
 
 class _IAPPageState extends State<IAPPage> {
   final _refresher = GlobalKey<RefreshIndicatorState>();
-  final _products = <ProductDetails>[];
+  final _products = <IAPItem>[];
   bool _restoring = false;
 
   Future<void> _refresh() async {
@@ -65,11 +64,12 @@ class _IAPPageState extends State<IAPPage> {
     );
   }
 
-  Widget _buildProduct(ProductDetails product) {
-    final purchaseState = MonetizationKit.instance.iap.stateOf(product.id);
+  Widget _buildProduct(IAPItem product) {
+    final purchaseState =
+        MonetizationKit.instance.iap.stateOf(product.productId!);
     return ListTile(
-      title: Text(product.title),
-      subtitle: Text(product.description),
+      title: Text(product.title ?? "<NO TITLE>"),
+      subtitle: Text(product.description ?? "<NO DESCRIPTION>"),
       trailing: ValueListenableBuilder(
         valueListenable: purchaseState,
         builder: (context, isPurchased, child) {
@@ -77,7 +77,7 @@ class _IAPPageState extends State<IAPPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                product.price,
+                product.price ?? "<NO PRICE>",
                 style: const TextStyle(color: Colors.red),
               ),
               if (isPurchased)
@@ -90,10 +90,7 @@ class _IAPPageState extends State<IAPPage> {
         },
       ),
       onTap: () {
-        MonetizationKit.instance.iap.purchase(
-          ProductType.inconsumable,
-          product,
-        );
+        MonetizationKit.instance.iap.purchase(product.productId!);
       },
     );
   }

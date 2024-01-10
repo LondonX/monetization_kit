@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
 import 'package:monetization_kit/iap/verifier/purchase_verifier.dart';
 import 'package:monetization_kit/monetization_kit.dart';
 

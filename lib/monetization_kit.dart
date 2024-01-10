@@ -7,6 +7,8 @@ import 'package:monetization_kit/ad/provider/ad_provider_admob.dart';
 import 'package:monetization_kit/ad/provider/ad_provider_max.dart';
 import 'package:monetization_kit/iap/iap.dart';
 
+export 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
+
 class MonetizationKit {
   static bool debug = false;
   final _methodChannel = const MethodChannel('monetization_kit');
