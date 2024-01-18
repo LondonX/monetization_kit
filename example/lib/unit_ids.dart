@@ -19,6 +19,6 @@ final admInterstitialUnit =
 final admBannerUnit = Platform.isAndroid ? _androidBanner : _iosBanner;
 final admRewardedUnit = Platform.isAndroid ? _androidRewarded : _iosRewarded;
 
-final maxNativeUnit = "b98b4d46aac279a7";
-final maxRewardedUnit = "f1dafda1d3cf071f";
-final maxInterstitialUnit = "87ee2d50d54de7f8";
+const maxNativeUnit = "b98b4d46aac279a7";
+const maxRewardedUnit = "f1dafda1d3cf071f";
+const maxInterstitialUnit = "87ee2d50d54de7f8";
