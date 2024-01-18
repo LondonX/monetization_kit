@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
 import 'package:monetization_kit/monetization_kit.dart';
 
 import 'purchase_state_manager.dart';
