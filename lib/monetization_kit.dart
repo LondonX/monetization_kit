@@ -21,6 +21,7 @@ class MonetizationKit {
   final IAP _iap = IAP();
 
   final adsInit = ValueNotifier(false);
+  final iapInit = ValueNotifier(false);
 
   T? findAdProvider<T extends AdProvider>() {
     for (var provider in adProviders) {
@@ -38,7 +39,14 @@ class MonetizationKit {
         verifyPurchase,
     bool withIap = true,
   }) async {
-    // init AdProviders
+    final results = await Future.wait([
+      _initAds(adProviders),
+      if (withIap) _initIap(),
+    ]);
+    return !results.any((element) => !element);
+  }
+
+  Future<bool> _initAds(List<AdProvider> adProviders) async {
     final withAdmob = adProviders.any(
       (provider) => provider is AdProviderAdMob,
     );
@@ -54,11 +62,20 @@ class MonetizationKit {
     if (results.any((element) => !element)) return false;
     this.adProviders.addAll(adProviders);
     adsInit.value = true;
-    // init iap
-    if (withIap) {
-      await _iap.init();
-    }
     return true;
+  }
+
+  Future<bool> _initIap() async {
+    try {
+      await _iap.init();
+      iapInit.value = true;
+      return true;
+    } catch (e, stack) {
+      if (kDebugMode) print(e);
+      debugPrintStack(stackTrace: stack);
+    }
+    iapInit.value = false;
+    return false;
   }
 
   Future<void> startAdmobMediationTest() async {
