@@ -29,7 +29,13 @@ class PurchaseStateManager {
   }
 
   Future<void> save() async {
-    final json = jsonEncode(_statePool.keys.toList());
+    final results = <String>[];
+    for (var productId in _statePool.keys) {
+      if (_statePool[productId]!.value) {
+        results.add(productId);
+      }
+    }
+    final json = jsonEncode(results.toList());
     await _file.writeAsBytes(json.codeUnits.reversed.toList());
   }
 
