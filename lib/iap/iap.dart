@@ -102,12 +102,7 @@ class IAP {
   /// query products and subscriptions by product ids
   ///
   Future<List<IAPItem>> queryProducts(List<String> productIds) async {
-    final lists = await Future.wait([
-      FlutterInappPurchase.instance.getProducts(productIds),
-      FlutterInappPurchase.instance.getSubscriptions(productIds),
-    ]);
-    final products = lists[0];
-    final subscriptions = lists[1];
+    final (products, subscriptions) = await _queryProducts(productIds);
     // doc: "iOS does not differentiate between IAP products and subscriptions."
     final results = [...products];
     for (var sub in subscriptions) {
@@ -118,12 +113,7 @@ class IAP {
   }
 
   Future<bool> purchase(String productId) async {
-    final lists = await Future.wait([
-      FlutterInappPurchase.instance.getProducts([productId]),
-      FlutterInappPurchase.instance.getSubscriptions([productId]),
-    ]);
-    final products = lists[0];
-    final subscriptions = lists[1];
+    final (products, subscriptions) = await _queryProducts([productId]);
     final ProductType type;
     if (products.any((e) => e.productId == productId)) {
       type = ProductType.consumable;
@@ -158,6 +148,16 @@ class IAP {
       }
     }
     return await value.completer.future;
+  }
+
+  Future<(List<IAPItem> products, List<IAPItem> subscriptions)> _queryProducts(
+      List<String> productIds) async {
+    final dummyId = "dummy_${DateTime.now().millisecondsSinceEpoch}";
+    final lists = await Future.wait([
+      FlutterInappPurchase.instance.getProducts([...productIds, dummyId]),
+      FlutterInappPurchase.instance.getSubscriptions([...productIds, dummyId]),
+    ]);
+    return (lists[0], lists[1]);
   }
 
   Future<void> _purchaseUpdate(PurchasedItem? item) async {
