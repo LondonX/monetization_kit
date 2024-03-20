@@ -6,11 +6,11 @@ const _androidInterstitial = "ca-app-pub-2883108589250494/5119514054";
 const _androidBanner = "ca-app-pub-2883108589250494/9685483018";
 const _androidRewarded = "ca-app-pub-2883108589250494/3774680789";
 
-const _iosNative = "ca-app-pub-2883108589250494/2626084796";
-const _iosAppOpen = "ca-app-pub-2883108589250494/7906331631";
-const _iosInterstitial = "ca-app-pub-2883108589250494/4053844399";
-const _iosBanner = "ca-app-pub-2883108589250494/4433156330";
-const _iosRewarded = "ca-app-pub-2883108589250494/9969350200";
+const _iosNative = "ca-app-pub-3940256099942544/3986624511";
+const _iosAppOpen = "ca-app-pub-3940256099942544/5575463023";
+const _iosInterstitial = "ca-app-pub-3940256099942544/4411468910";
+const _iosBanner = "ca-app-pub-3940256099942544/2435281174";
+const _iosRewarded = "ca-app-pub-3940256099942544/1712485313";
 
 final admNativeUnit = Platform.isAndroid ? _androidNative : _iosNative;
 final admAppOpenUnit = Platform.isAndroid ? _androidAppOpen : _iosAppOpen;

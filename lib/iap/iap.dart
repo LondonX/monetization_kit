@@ -12,14 +12,22 @@ class IAP {
 
   final purchasing = ValueNotifier<Purchasing?>(null);
 
+  var _isAvailable = false;
+  bool get isAvailable => _isAvailable;
+
   ///
   /// init IAP class
   ///
   Future<void> init() async {
     await _nonConsumableStateManager.init();
     await FlutterInappPurchase.instance.finalize();
-    final result = await FlutterInappPurchase.instance.initialize();
-    _log("init result: $result");
+    try {
+      final result = await FlutterInappPurchase.instance.initialize();
+      _log("init result: $result");
+    } catch (e) {
+      _log("init failed: $e");
+      _isAvailable = false;
+    }
     FlutterInappPurchase.purchaseUpdated
         .asBroadcastStream()
         .listen(_purchaseUpdate);
@@ -56,6 +64,10 @@ class IAP {
   /// result will update in [stateOf]
   ///
   Future<void> restore() async {
+    if (!_isAvailable) {
+      _log("not available");
+      return;
+    }
     final applyingProducts =
         await FlutterInappPurchase.instance.getAppStoreInitiatedProducts();
     for (var product in applyingProducts) {
@@ -102,6 +114,10 @@ class IAP {
   /// query products and subscriptions by product ids
   ///
   Future<List<IAPItem>> queryProducts(List<String> productIds) async {
+    if (!_isAvailable) {
+      _log("not available");
+      return [];
+    }
     final (products, subscriptions) = await _queryProducts(productIds);
     // doc: "iOS does not differentiate between IAP products and subscriptions."
     final results = [...products];
@@ -113,6 +129,10 @@ class IAP {
   }
 
   Future<bool> purchase(String productId) async {
+    if (!_isAvailable) {
+      _log("not available");
+      return false;
+    }
     final (products, subscriptions) = await _queryProducts([productId]);
     final ProductType type;
     if (products.any((e) => e.productId == productId)) {

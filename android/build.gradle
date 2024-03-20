@@ -9,17 +9,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath 'com.android.tools.build:gradle:7.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
-
-//allprojects {
-//    repositories {
-//        google()
-//        mavenCentral()
-//    }
-//}
 
 rootProject.allprojects {
     repositories {
@@ -36,7 +29,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.LondonX.monetization_kit'
+    }
+
+    compileSdk 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -61,17 +58,17 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
 
     // Admob mediations
-    implementation 'com.google.android.ads:mediation-test-suite:+'
-    implementation 'com.google.ads.mediation:facebook:+'
-    implementation 'com.unity3d.ads:unity-ads:+'
-    implementation 'com.google.ads.mediation:unity:+'
-    implementation 'com.google.ads.mediation:pangle:+'
-    implementation 'com.google.ads.mediation:mintegral:+'
-    implementation 'com.google.ads.mediation:applovin:+'
+    implementation 'com.google.android.ads:mediation-test-suite:3.0.0'
+    implementation 'com.google.ads.mediation:facebook:6.16.0.0'
+    implementation 'com.unity3d.ads:unity-ads:4.9.3'
+    implementation 'com.google.ads.mediation:unity:4.9.3.0'
+    implementation 'com.google.ads.mediation:pangle:5.8.0.7.0'
+    implementation 'com.google.ads.mediation:mintegral:16.6.51.0'
+    implementation 'com.google.ads.mediation:applovin:12.3.0.0'
     // implementation 'com.google.ads.mediation:vungle:+'
-    implementation 'com.google.ads.mediation:chartboost:+'
-    implementation 'com.google.ads.mediation:inmobi:+'
-    implementation 'com.google.ads.mediation:ironsource:+'
+    implementation 'com.google.ads.mediation:chartboost:9.6.1.0'
+    implementation 'com.google.ads.mediation:inmobi:10.6.7.0'
+    // implementation 'com.google.ads.mediation:ironsource:7.8.1.1'
     // Max mediations
-    implementation 'com.applovin:applovin-sdk:+'
+    implementation 'com.applovin:applovin-sdk:12.3.1'
 }
