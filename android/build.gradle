@@ -9,17 +9,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath 'com.android.tools.build:gradle:7.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
-
-//allprojects {
-//    repositories {
-//        google()
-//        mavenCentral()
-//    }
-//}
 
 rootProject.allprojects {
     repositories {
@@ -36,7 +29,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.LondonX.monetization_kit'
+    }
+
+    compileSdk 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -61,7 +58,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
 
     // Admob mediations
-    implementation 'com.google.android.ads:mediation-test-suite:+'
+    implementation 'com.google.android.ads:mediation-test-suite:3.0.0'
     // Max mediations
-    implementation 'com.applovin:applovin-sdk:+'
+    implementation 'com.applovin:applovin-sdk:12.3.1'
 }
