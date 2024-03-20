@@ -23,6 +23,7 @@ class IAP {
     await FlutterInappPurchase.instance.finalize();
     try {
       final result = await FlutterInappPurchase.instance.initialize();
+      _isAvailable = true;
       _log("init result: $result");
     } catch (e) {
       _log("init failed: $e");
