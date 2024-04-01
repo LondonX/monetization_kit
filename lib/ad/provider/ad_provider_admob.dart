@@ -263,7 +263,6 @@ class AdProviderAdMob extends AdProvider {
           completer.complete(null);
         },
       ),
-      orientation: AppOpenAd.orientationPortrait,
     );
     final ad = await completer.future;
     ad?.fullScreenContentCallback = FullScreenContentCallback(
