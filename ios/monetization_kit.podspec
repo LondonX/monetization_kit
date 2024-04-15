@@ -19,7 +19,7 @@ A new Flutter plugin project.
   s.dependency 'google_mobile_ads'
   s.dependency 'AppLovinSDK', '12.1.0'
   s.dependency 'GoogleMobileAdsMediationTestSuite', '3.0.0'
-  s.dependency 'GoogleMobileAdsMediationFacebook', '6.14.0.0'
+  s.dependency 'GoogleMobileAdsMediationFacebook', '6.15.0.0'
   s.dependency 'GoogleMobileAdsMediationUnity', '4.9.2.0'
   s.dependency 'GoogleMobileAdsMediationPangle', '5.7.0.7.0'
   s.dependency 'GoogleMobileAdsMediationMintegral', '7.5.6.0'
