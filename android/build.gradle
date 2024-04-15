@@ -59,16 +59,17 @@ dependencies {
 
     // Admob mediations
     implementation 'com.google.android.ads:mediation-test-suite:3.0.0'
-    implementation 'com.google.ads.mediation:facebook:6.17.0.0'
-    implementation 'com.unity3d.ads:unity-ads:4.9.3'
-    implementation 'com.google.ads.mediation:unity:4.9.3.0'
-    implementation 'com.google.ads.mediation:pangle:5.8.0.7.0'
-    implementation 'com.google.ads.mediation:mintegral:16.6.51.0'
-    // implementation 'com.google.ads.mediation:applovin:12.3.0.0'
+    implementation 'com.google.android.ads:mediation-test-suite:+'
+    implementation 'com.google.ads.mediation:facebook:+'
+    implementation 'com.unity3d.ads:unity-ads:+'
+    implementation 'com.google.ads.mediation:unity:+'
+    implementation 'com.google.ads.mediation:pangle:+'
+    implementation 'com.google.ads.mediation:mintegral:+'
+    implementation 'com.google.ads.mediation:applovin:+'
     // implementation 'com.google.ads.mediation:vungle:+'
-    implementation 'com.google.ads.mediation:chartboost:9.6.1.0'
-    implementation 'com.google.ads.mediation:inmobi:10.6.7.0'
-    // implementation 'com.google.ads.mediation:ironsource:7.8.1.1'
+    implementation 'com.google.ads.mediation:chartboost:+'
+    implementation 'com.google.ads.mediation:inmobi:+'
+    // implementation 'com.google.ads.mediation:ironsource:+'
     // Max mediations
-    implementation 'com.applovin:applovin-sdk:12.3.1'
+    implementation 'com.applovin:applovin-sdk:+'
 }
