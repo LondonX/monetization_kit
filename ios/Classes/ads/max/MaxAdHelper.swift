@@ -58,7 +58,7 @@ public class MaxAdHelper: NSObject {
             showAppOpenAd(adKey: adKey ?? "", result: result)
             break
         case "max_showMediationDebugger":
-            ALSdk.shared()?.showMediationDebugger()
+            ALSdk.shared().showMediationDebugger()
             break
         default:
             return false
@@ -67,9 +67,9 @@ public class MaxAdHelper: NSObject {
     }
     
     private func initSdk(result: @escaping FlutterResult) {
-        ALSdk.shared()!.initializeSdk { (configuration: ALSdkConfiguration) in
+        ALSdk.shared().initializeSdk { (configuration: ALSdkConfiguration) in
         }
-        let configMap = alSdkConfigToMap(config: ALSdk.shared()!.configuration)
+        let configMap = alSdkConfigToMap(config: ALSdk.shared().configuration)
         result(configMap)
     }
     

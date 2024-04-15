@@ -60,5 +60,5 @@ dependencies {
     // Admob mediations
     implementation 'com.google.android.ads:mediation-test-suite:3.0.0'
     // Max mediations
-    implementation 'com.applovin:applovin-sdk:12.3.1'
+    implementation 'com.applovin:applovin-sdk:+'
 }
