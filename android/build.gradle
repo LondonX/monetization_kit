@@ -59,7 +59,7 @@ dependencies {
 
     // Admob mediations
     implementation 'com.google.android.ads:mediation-test-suite:3.0.0'
-    implementation 'com.google.ads.mediation:facebook:6.16.0.0'
+    implementation 'com.google.ads.mediation:facebook:6.17.0.0'
     implementation 'com.unity3d.ads:unity-ads:4.9.3'
     implementation 'com.google.ads.mediation:unity:4.9.3.0'
     implementation 'com.google.ads.mediation:pangle:5.8.0.7.0'
