@@ -28,10 +28,17 @@ class AutoLoadingAdContainer extends StatefulWidget {
   State<AutoLoadingAdContainer> createState() => _AutoLoadingAdContainerState();
 }
 
+final _loadedPool = <AdLoader, DateTime>{};
+
 class _AutoLoadingAdContainerState extends State<AutoLoadingAdContainer>
     with WidgetsBindingObserver {
   final _key = GlobalKey();
-  DateTime _loadedAt = DateTime.fromMillisecondsSinceEpoch(0);
+  DateTime get _loadedAt =>
+      _loadedPool[widget.adLoader] ??= DateTime.fromMillisecondsSinceEpoch(0);
+  set _loadedAt(DateTime value) {
+    _loadedPool[widget.adLoader] = value;
+  }
+
   bool _appActive = true;
   late bool _visibility = widget.initAdLoading;
   bool get _adsInit => MonetizationKit.instance.adsInit.value;
