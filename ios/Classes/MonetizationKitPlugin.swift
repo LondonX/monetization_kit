@@ -5,22 +5,14 @@ import FBAudienceNetwork
 import GoogleMobileAdsMediationTestSuite
 
 public class MonetizationKitPlugin: NSObject, FlutterPlugin {
-    private let maxAdHelper: MaxAdHelper
-    
-    init(maxAdHelper: MaxAdHelper) {
-        self.maxAdHelper = maxAdHelper
-    }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "monetization_kit", binaryMessenger: registrar.messenger())
-        let instance = MonetizationKitPlugin(maxAdHelper: MaxAdHelper(channel: channel, registrar: registrar))
+        let instance = MonetizationKitPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if(maxAdHelper.handle(call, result: result)) {
-            return
-        }
         let args = call.arguments as? [String : Any]
         switch(call.method) {
         case "initAds":

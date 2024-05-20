@@ -24,8 +24,6 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     SettingsPage(
       fakeAnalyticsList: [
         _admobFakeAnalytics,
-        _maxFakeAnalytics,
-        _mixedFakeAnalytics,
       ],
     ),
     // Admob
@@ -58,73 +56,10 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
       startMediationTest: MonetizationKit.instance.startAdmobMediationTest,
       startInspector: MonetizationKit.instance.startAdmobInspector,
     ),
-    //max
-    AdProviderPage(
-      native: AdLoader(
-        unitIds: [maxNativeUnit],
-        adType: AdType.native,
-        log: _maxFakeAnalytics.logAds,
-      ),
-      banner: null,
-      appOpen: null,
-      rewarded: AdLoader(
-        unitIds: [maxRewardedUnit],
-        adType: AdType.rewarded,
-        log: _maxFakeAnalytics.logAds,
-      ),
-      interstitial: AdLoader(
-        unitIds: [maxInterstitialUnit],
-        adType: AdType.interstitial,
-        log: _maxFakeAnalytics.logAds,
-      ),
-      startMediationTest: MonetizationKit.instance.startMaxMediationTest,
-      startInspector: null,
-    ),
-    //mixed
-    AdProviderPage(
-      native: AdLoader(
-        unitIds: [
-          admNativeUnit,
-          maxNativeUnit,
-        ],
-        adType: AdType.native,
-        log: _mixedFakeAnalytics.logAds,
-      ),
-      banner: AdLoader(
-        unitIds: [admBannerUnit],
-        adType: AdType.banner,
-        log: _mixedFakeAnalytics.logAds,
-      ),
-      appOpen: AdLoader(
-        unitIds: [admAppOpenUnit],
-        adType: AdType.appOpen,
-        log: _mixedFakeAnalytics.logAds,
-      ),
-      rewarded: AdLoader(
-        unitIds: [
-          admRewardedUnit,
-          maxRewardedUnit,
-        ],
-        adType: AdType.rewarded,
-        log: _mixedFakeAnalytics.logAds,
-      ),
-      interstitial: AdLoader(
-        unitIds: [
-          admInterstitialUnit,
-          maxInterstitialUnit,
-        ],
-        adType: AdType.interstitial,
-        log: _mixedFakeAnalytics.logAds,
-      ),
-      startMediationTest: null,
-      startInspector: null,
-    ),
     //IAP
     const IAPPage(),
   ];
   final _admobFakeAnalytics = FakeAnalytics(page: "AdmobPage");
-  final _maxFakeAnalytics = FakeAnalytics(page: "MaxPage");
-  final _mixedFakeAnalytics = FakeAnalytics(page: "MixedPage");
   late final _tab = TabController(length: _appPages.length, vsync: this);
   bool _initFinished = false;
 
@@ -205,8 +140,6 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               tabs: const [
                 Tab(text: "Settings"),
                 Tab(text: "Admob"),
-                Tab(text: "Max"),
-                Tab(text: "Mixed"),
                 Tab(text: "IAP."),
               ],
             ),

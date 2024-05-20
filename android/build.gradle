@@ -69,6 +69,4 @@ dependencies {
     implementation 'com.google.ads.mediation:chartboost:+'
     implementation 'com.google.ads.mediation:inmobi:+'
     // implementation 'com.google.ads.mediation:ironsource:+'
-    // Max mediations
-    implementation 'com.applovin:applovin-sdk:+'
 }
