@@ -17,7 +17,6 @@ A new Flutter plugin project.
   s.resource_bundles = { 'monetization_kit' => ['monetization_kit/**/*.{xib,xcassets}'] }
   s.dependency 'Flutter'
   s.dependency 'google_mobile_ads'
-  s.dependency 'AppLovinSDK'
   s.dependency 'GoogleMobileAdsMediationTestSuite'
   s.platform = :ios, '13.0'
   s.static_framework = true
