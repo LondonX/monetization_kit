@@ -2,7 +2,7 @@ group 'com.LondonX.monetization_kit'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.9.23'
     repositories {
         google()
         mavenCentral()
@@ -66,10 +66,8 @@ dependencies {
     implementation 'com.google.ads.mediation:pangle:+'
     implementation 'com.google.ads.mediation:mintegral:+'
     implementation 'com.google.ads.mediation:applovin:+'
-    // implementation 'com.google.ads.mediation:vungle:+'
+    implementation 'com.google.ads.mediation:vungle:+'
     implementation 'com.google.ads.mediation:chartboost:+'
     implementation 'com.google.ads.mediation:inmobi:+'
     // implementation 'com.google.ads.mediation:ironsource:+'
-    // Max mediations
-    implementation 'com.applovin:applovin-sdk:+'
 }

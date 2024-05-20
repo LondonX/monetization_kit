@@ -14,22 +14,6 @@
 <key>GADApplicationIdentifier</key>
 <string>ca-app-pub-0000000000000000~0000000000</string>
 ```
-
-## Add AppLovin `meta-data` if you need AppLovin.
-### Android
-```xml
-<application>
-    <meta-data
-        android:name="applovin.sdk.key"
-        android:value="00000000000000000000000000000000000000000000000000000000000-00000000000000000000000000" />
-</application>
-```
-### iOS
-```plist
-<key>AppLovinSdkKey</key>
-<string>00000000000000000000000000000000000000000000000000000000000-00000000000000000000000000</string>
-```
-
 ## Call init in dart
 ```dart
 MonetizationKit.debug = kDebugMode;// optional

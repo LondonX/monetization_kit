@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.LondonX.monetization_kit_example">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
         android:label="monetization_kit_example"
         android:name="${applicationName}"
@@ -8,9 +7,6 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-2883108589250494~6428764280" />
-        <meta-data
-            android:name="applovin.sdk.key"
-            android:value="Idz6lyQKWKo9LFSOGCb1QPPOCI7Z6hz8i50adlJXyO2zDizQvU7mGabkgV0-i61hZt6OyVSMOOW2CnZHOT2lql" />
 
         <activity
             android:name=".MainActivity"
@@ -39,4 +35,11 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
+        </intent>
+    </queries>
 </manifest>

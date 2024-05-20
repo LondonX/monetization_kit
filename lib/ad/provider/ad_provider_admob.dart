@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:user_messaging_platform/user_messaging_platform.dart' as ump;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../widget/ad_visibility.dart';
@@ -286,22 +284,35 @@ class AdProviderAdMob extends AdProvider {
   }
 
   Future<void> _updateUmpConsent() async {
-    try {
-      final info =
-          await ump.UserMessagingPlatform.instance.requestConsentInfoUpdate();
-      debugLog("current UMP info: $info");
-      if (info.consentStatus == ump.ConsentStatus.required) {
-        final result =
-            await ump.UserMessagingPlatform.instance.showConsentForm();
-        debugLog("result UMP info: $result");
-      }
-    } catch (e, stack) {
-      debugLog("UMP not config");
-      log(
-        "UMP not config",
-        error: e,
-        stackTrace: stack,
-      );
-    }
+    final completer = Completer<bool>();
+    ConsentInformation.instance.requestConsentInfoUpdate(
+      ConsentRequestParameters(),
+      () => _loadAndShowUmpConstForm((error) {
+        if (error == null) {
+          completer.complete(true);
+          return;
+        }
+        debugPrint(
+          "[Monet]UMP show consent form failed: ${error.message}(${error.errorCode})",
+        );
+        completer.complete(false);
+      }),
+      (error) {
+        debugPrint(
+          "[Monet]UMP update consent info failed: ${error.message}(${error.errorCode})",
+        );
+        completer.complete(false);
+      },
+    );
+    await completer.future;
+  }
+
+  void _loadAndShowUmpConstForm(void Function(FormError? error) onDismiss) {
+    ConsentForm.loadConsentForm(
+      (form) {
+        form.show(onDismiss);
+      },
+      (formError) => onDismiss.call(formError),
+    );
   }
 }
