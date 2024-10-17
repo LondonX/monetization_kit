@@ -15,7 +15,11 @@ class SimpleApplePurchaseVerifier extends PurchaseVerifier {
   const SimpleApplePurchaseVerifier({required this.password});
 
   @override
-  FutureOr<bool> verify(String productId, String purchaseToken) async {
+  FutureOr<bool> verify(
+    String productId,
+    String transactionId,
+    String purchaseToken,
+  ) async {
     if (!Platform.isIOS && !Platform.isMacOS) return true;
     final body = {
       "receipt-data": purchaseToken,

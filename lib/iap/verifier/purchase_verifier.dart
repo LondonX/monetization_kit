@@ -4,6 +4,7 @@ abstract class PurchaseVerifier {
   const PurchaseVerifier();
   FutureOr<bool> verify(
     String productId,
+    String transactionId,
     String purchaseToken,
   );
 }

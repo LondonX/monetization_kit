@@ -21,8 +21,8 @@ abstract class AdProvider {
       "onSecondary": colorScheme.onSecondary.value,
       "error": colorScheme.error.value,
       "onError": colorScheme.onError.value,
-      "background": colorScheme.background.value,
-      "onBackground": colorScheme.onBackground.value,
+      "background": colorScheme.surface.value,
+      "onBackground": colorScheme.onSurface.value,
       "surface": colorScheme.surface.value,
       "onSurface": colorScheme.onSurface.value,
     };
