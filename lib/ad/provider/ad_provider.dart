@@ -87,7 +87,11 @@ abstract class AdProvider {
   /// show rewarded ad
   /// return true if finish and got reward
   ///
-  Future<bool> showRewardedAdIfLoaded(Object rewardedAd);
+  Future<bool> showRewardedAdIfLoaded(
+    Object rewardedAd, {
+    String? userId,
+    String? customData,
+  });
 
   ///
   /// load AppOpen ad
