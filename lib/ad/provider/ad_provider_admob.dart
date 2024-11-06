@@ -6,6 +6,7 @@ import '../widget/ad_visibility.dart';
 import 'ad_provider.dart';
 
 const _adRequest = AdManagerAdRequest(httpTimeoutMillis: 5000);
+final _rewardedClosing = <String, Completer<bool>>{};
 
 class AdProviderAdMob extends AdProvider {
   const AdProviderAdMob({super.name = "Admob"});
@@ -181,6 +182,8 @@ class AdProviderAdMob extends AdProvider {
     required Function() onClick,
     required Function() onShow,
     required Function() onDismiss,
+    String? userId,
+    String? customData,
   }) async {
     final completer = Completer<RewardedAd?>();
     final startAt = DateTime.now();
@@ -213,6 +216,10 @@ class AdProviderAdMob extends AdProvider {
         onShow();
       },
       onAdDismissedFullScreenContent: (ad) {
+        final completer = _rewardedClosing[ad.adUnitId];
+        if (completer != null && !completer.isCompleted) {
+          completer.complete(true);
+        }
         onDismiss();
       },
     );
@@ -220,17 +227,27 @@ class AdProviderAdMob extends AdProvider {
   }
 
   @override
-  Future<bool> showRewardedAdIfLoaded(Object rewardedAd) async {
+  Future<bool> showRewardedAdIfLoaded(
+    Object rewardedAd, {
+    String? userId,
+    String? customData,
+  }) async {
     if (rewardedAd is! RewardedAd) return false;
-    final completer = Completer<bool>();
+    await rewardedAd.setServerSideOptions(ServerSideVerificationOptions(
+      userId: userId,
+      customData: customData,
+    ));
+    final closing = _rewardedClosing[rewardedAd.adUnitId] = Completer<bool>();
+    final rewarding = Completer<bool>();
     rewardedAd.show(
       onUserEarnedReward: (ad, rewarded) {
         final isRewarded = rewarded.amount > 0;
         debugLog("Rewarded finish, isRewarded: $isRewarded");
-        completer.complete(isRewarded);
+        rewarding.complete(isRewarded);
       },
     );
-    return await completer.future;
+    await closing.future;
+    return await rewarding.future;
   }
 
   @override

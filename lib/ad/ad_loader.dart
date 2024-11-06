@@ -265,7 +265,10 @@ class AdLoader {
     return _fullscreenAdCache;
   }
 
-  Future<bool> showFullscreenAd() async {
+  Future<bool> showFullscreenAd({
+    String? userId,
+    String? customData,
+  }) async {
     if (!adCacheValid) return false;
     bool finished = false;
     switch (_fullscreenCachedType) {
@@ -278,6 +281,8 @@ class AdLoader {
       case AdType.rewarded:
         finished = await _fullscreenCachedAdProvider?.showRewardedAdIfLoaded(
               _fullscreenAdCache!,
+              userId: userId,
+              customData: customData,
             ) ??
             false;
         break;

@@ -21,8 +21,8 @@ abstract class AdProvider {
       "onSecondary": colorScheme.onSecondary.value,
       "error": colorScheme.error.value,
       "onError": colorScheme.onError.value,
-      "background": colorScheme.background.value,
-      "onBackground": colorScheme.onBackground.value,
+      "background": colorScheme.surface.value,
+      "onBackground": colorScheme.onSurface.value,
       "surface": colorScheme.surface.value,
       "onSurface": colorScheme.onSurface.value,
     };
@@ -87,7 +87,11 @@ abstract class AdProvider {
   /// show rewarded ad
   /// return true if finish and got reward
   ///
-  Future<bool> showRewardedAdIfLoaded(Object rewardedAd);
+  Future<bool> showRewardedAdIfLoaded(
+    Object rewardedAd, {
+    String? userId,
+    String? customData,
+  });
 
   ///
   /// load AppOpen ad

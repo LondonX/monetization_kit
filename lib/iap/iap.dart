@@ -78,23 +78,26 @@ class IAP {
     }
     final purchases =
         (await FlutterInappPurchase.instance.getAvailablePurchases()) ?? [];
-    final distinctedPurchases = <PurchasedItem>[];
+    final distinctPurchases = <PurchasedItem>[];
     //sort by new to old
     for (var item in purchases.reversed) {
-      if (distinctedPurchases.any((e) =>
+      if (distinctPurchases.any((e) =>
           e.originalTransactionIdentifierIOS != null &&
           e.originalTransactionIdentifierIOS ==
               item.originalTransactionIdentifierIOS)) continue;
-      distinctedPurchases.add(item);
+      distinctPurchases.add(item);
     }
-    for (var purchase in distinctedPurchases) {
+    for (var purchase in distinctPurchases) {
       final productId = purchase.productId;
+      final transactionId = purchase.transactionId;
       final purchaseToken =
           purchase.purchaseToken ?? purchase.transactionReceipt;
-      if (productId == null || purchaseToken == null) continue;
+      if (productId == null || transactionId == null || purchaseToken == null) {
+        continue;
+      }
       var success = true;
       for (var verifier in _verifiers) {
-        if (!await verifier.verify(productId, purchaseToken)) {
+        if (!await verifier.verify(productId, transactionId, purchaseToken)) {
           _log(
             "verifier<${verifier.runtimeType}> returns false during restore",
           );
@@ -105,7 +108,7 @@ class IAP {
       stateOf(productId).value = success;
     }
     _nonConsumableStateManager.revokeNotExits(
-      distinctedPurchases.map((e) => e.productId).whereType(),
+      distinctPurchases.map((e) => e.productId).whereType(),
     );
     //revoke purchase cache
     await _nonConsumableStateManager.save();
@@ -184,9 +187,11 @@ class IAP {
   Future<void> _purchaseUpdate(PurchasedItem? item) async {
     final purchasingValue = purchasing.value;
     final productId = item?.productId;
+    final transactionId = item?.transactionId;
     final purchaseToken = item?.purchaseToken ?? item?.transactionReceipt;
     if (item == null ||
         productId == null ||
+        transactionId == null ||
         purchaseToken == null ||
         purchasingValue == null) return;
     final isPaid = item.purchaseStateAndroid == PurchaseState.purchased ||
@@ -196,7 +201,7 @@ class IAP {
     if (!isPaid) return;
     var success = true;
     for (var verifier in _verifiers) {
-      if (!await verifier.verify(productId, purchaseToken)) {
+      if (!await verifier.verify(productId, transactionId, purchaseToken)) {
         _log(
           "verifier<${verifier.runtimeType}> returns false during _purchaseUpdate",
         );
